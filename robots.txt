@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /index3.html
+
+Sitemap: https://thetwenty.life/sitemap.xml
