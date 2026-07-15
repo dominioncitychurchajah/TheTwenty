@@ -35,11 +35,13 @@
         .cursor-ring { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(212,166,58,0.4); pointer-events: none; z-index: 99998; transition: all 0.2s ease-out; transform: translate(-50%, -50%); }
         .cursor-ring.hovering { width: 60px; height: 60px; border-width: 3px; border-color: var(--accent-gold); }
 
-        .loading-screen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
+        .loading-screen { position: fixed; inset: 0; background: radial-gradient(circle at 50% 42%, rgba(212,166,58,0.08), transparent 28%), var(--bg-primary); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; transition: opacity 0.6s ease, visibility 0.6s ease; }
         .loading-screen.hidden { opacity: 0; pointer-events: none; }
-        .loading-bar { width: 200px; height: 2px; background: var(--border-subtle); border-radius: 2px; overflow: hidden; }
-        .loading-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); border-radius: 2px; animation: loadingProgress 2s ease-out forwards; }
-        .loading-text { margin-top: 16px; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; }
+        .loading-logo { width: min(320px, 72vw); padding: 18px 22px; background: rgba(248,250,252,0.98); border-radius: 18px; box-shadow: 0 24px 80px rgba(0,0,0,0.35); }
+        .loading-logo img { width: 100%; height: auto; display: block; }
+        .loading-bar { width: min(280px, 64vw); height: 3px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
+        .loading-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-gold), #F0D78C); border-radius: inherit; animation: loadingProgress 1.1s ease-out forwards; }
+        .loading-text { margin-top: 0; font-size: 0.72rem; color: var(--text-secondary); letter-spacing: 0.22em; text-transform: uppercase; }
 
         #webgl-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
@@ -101,7 +103,6 @@
         .visual-text { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.1rem; }
 
         .float-card { position: absolute; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 16px 20px; backdrop-filter: blur(10px); animation: float 6s ease-in-out infinite; }
-        .float-card-1 { top: -20px; right: -20px; animation-delay: 0s; }
         .float-card-2 { bottom: 40px; left: -30px; animation-delay: 1s; }
         .float-card-3 { bottom: -20px; right: 40px; animation-delay: 2s; }
         .float-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
@@ -270,7 +271,7 @@
 <body>
 
     <div class="loading-screen" id="loadingScreen">
-        <div class="loading-logo"><img src="TheTwenty Logo.png" alt="#TheTwenty" style="height:48px;width:auto;display:block;margin:0 auto;"></div>
+        <div class="loading-logo"><img src="TheTwenty Logo.png" alt="#TheTwenty"></div>
         <div class="loading-bar"><div class="loading-fill"></div></div>
         <div class="loading-text">Initializing Experience</div>
     </div>
@@ -281,7 +282,7 @@
     <canvas id="webgl-canvas"></canvas>
 
     <nav class="nav" id="nav">
-        <a href="index_elevated.html" class="nav-logo magnetic-btn"><img src="TheTwenty Logo.png" alt="#TheTwenty" style="height:36px;width:auto;display:block;"></a>
+        <a href="index.html" class="nav-logo magnetic-btn"><img src="TheTwenty Logo.png" alt="#TheTwenty" style="height:36px;width:auto;display:block;"></a>
         <div class="nav-links">
             <a href="kingdom-vision.html" class="magnetic-btn">Vision</a>
             <a href="curriculum.html" class="magnetic-btn">Curriculum</a>
@@ -347,13 +348,6 @@
                         </div>
                         <div class="visual-text">Building the future, together.</div>
                     </div>
-                </div>
-                <div class="float-card float-card-1 parallax-fast">
-                    <div class="float-label">Seats Remaining</div>
-                    <div class="seat-counter" id="seatCounter">
-                        <span class="digit" id="digit1">0</span><span class="digit" id="digit2">7</span>
-                    </div>
-                    <div class="float-sub">of 20 spots</div>
                 </div>
                 <div class="float-card float-card-2 parallax-fast">
                     <div class="float-label">Income Target</div>
@@ -853,7 +847,7 @@
         window.addEventListener('load', function() {
             setTimeout(function() {
                 document.getElementById('loadingScreen').classList.add('hidden');
-            }, 2200);
+            }, 1200);
         });
 
         // ===== 2. CUSTOM CURSOR =====
