@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ — #TheTwenty</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0B0F17;
+            --bg-secondary: #111827;
+            --bg-card: #151D2E;
+            --bg-card-hover: #1A2438;
+            --border-subtle: rgba(255,255,255,0.06);
+            --border-accent: rgba(212,166,58,0.3);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-gold: #D4A63A;
+            --accent-gold-dim: rgba(212,166,58,0.15);
+            --accent-blue: #2563EB;
+            --accent-blue-dim: rgba(37,99,235,0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); overflow-x: hidden; line-height: 1.6; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(11, 15, 23, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); transition: all 0.3s ease; }
+        .nav.scrolled { padding: 14px 40px; background: rgba(11, 15, 23, 0.95); }
+        .nav-logo { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-logo span { color: var(--accent-gold); }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent-gold); transition: width 0.3s; }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active { color: var(--accent-gold); }
+        .nav-cta { background: var(--accent-gold); color: var(--bg-primary); padding: 10px 24px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; }
+        .nav-cta:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(212,166,58,0.3); }
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; }
+
+        .page-hero { min-height: 50vh; display: flex; align-items: center; justify-content: center; position: relative; padding: 140px 40px 60px; overflow: hidden; }
+        .page-hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(37,99,235,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(212,166,58,0.06) 0%, transparent 50%); }
+        .page-hero-content { max-width: 900px; text-align: center; position: relative; z-index: 2; }
+        .page-hero-eyebrow { color: var(--accent-gold); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 20px; display: inline-block; background: var(--accent-gold-dim); padding: 8px 20px; border-radius: 100px; border: 1px solid var(--border-accent); }
+        .page-hero h1 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px; }
+        .page-hero p { color: var(--text-secondary); font-size: 1.2rem; line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+        .section { padding: 80px 40px; position: relative; }
+        .section-header { max-width: 800px; margin: 0 auto 60px; text-align: center; }
+        .section-eyebrow { color: var(--accent-gold); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; }
+        .section-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
+        .section-subtitle { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; }
+
+        .faq-section { background: var(--bg-primary); }
+        .faq-container { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; margin-bottom: 12px; overflow: hidden; transition: all 0.3s; }
+        .faq-item:hover { border-color: var(--border-accent); }
+        .faq-question { padding: 24px 28px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; font-size: 1rem; transition: color 0.2s; }
+        .faq-question:hover { color: var(--accent-gold); }
+        .faq-icon { width: 24px; height: 24px; transition: transform 0.3s; flex-shrink: 0; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; }
+        .faq-item.active .faq-answer { max-height: 500px; padding: 0 28px 24px; }
+        .faq-answer p { color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; }
+        .faq-answer ul { margin: 12px 0 12px 20px; color: var(--text-secondary); }
+        .faq-answer ul li { margin-bottom: 8px; }
+
+        .faq-categories { background: var(--bg-secondary); padding: 40px 0; border-bottom: 1px solid var(--border-subtle); }
+        .faq-cat-grid { max-width: 800px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .faq-cat-btn { background: var(--bg-card); border: 1px solid var(--border-subtle); color: var(--text-secondary); padding: 10px 24px; border-radius: 100px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .faq-cat-btn:hover, .faq-cat-btn.active { background: var(--accent-gold-dim); border-color: var(--accent-gold); color: var(--accent-gold); }
+
+        .contact-section { background: var(--bg-secondary); text-align: center; padding: 100px 40px; }
+        .contact-card { max-width: 600px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 48px; }
+        .contact-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.5rem; margin-bottom: 16px; }
+        .contact-card p { color: var(--text-secondary); margin-bottom: 32px; }
+        .contact-methods { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .contact-method { display: flex; align-items: center; gap: 8px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 12px 24px; border-radius: 12px; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: all 0.2s; }
+        .contact-method:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+        .footer { background: var(--bg-secondary); border-top: 1px solid var(--border-subtle); padding: 60px 40px 30px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; }
+        .footer-brand { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.5rem; margin-bottom: 16px; }
+        .footer-brand span { color: var(--accent-gold); }
+        .footer-desc { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px; }
+        .footer-social { display: flex; gap: 12px; }
+        .footer-social a { width: 40px; height: 40px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
+        .footer-social a:hover { border-color: var(--accent-gold); color: var(--accent-gold); transform: translateY(-2px); }
+        .footer-col h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 20px; color: var(--text-primary); }
+        .footer-col a { display: block; color: var(--text-secondary); text-decoration: none; padding: 6px 0; font-size: 0.9rem; transition: color 0.2s; }
+        .footer-col a:hover { color: var(--accent-gold); }
+        .footer-bottom { max-width: 1200px; margin: 40px auto 0; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 0.8rem; }
+
+        .btn-primary { background: var(--accent-gold); color: var(--bg-primary); padding: 16px 32px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; cursor: pointer; font-family: 'Inter', sans-serif; }
+        .btn-primary:hover { transform: scale(1.03); box-shadow: 0 0 40px rgba(212,166,58,0.3); }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 1024px) {
+            .footer-content { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .section { padding: 60px 20px; }
+            .page-hero { padding: 100px 20px 60px; }
+            .footer-content { grid-template-columns: 1fr; gap: 40px; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+            .contact-card { padding: 32px 24px; }
+        }
+    
+        /* ===== ELEVATED EFFECTS ===== */
+        .cursor-dot { position: fixed; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-gold); pointer-events: none; z-index: 99999; mix-blend-mode: difference; transition: transform 0.15s ease-out; transform: translate(-50%, -50%); }
+        .cursor-ring { position: fixed; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(212,166,58,0.4); pointer-events: none; z-index: 99998; transition: all 0.2s ease-out; transform: translate(-50%, -50%); }
+        .cursor-ring.hovering { width: 60px; height: 60px; border-width: 3px; border-color: var(--accent-gold); }
+        .loading-screen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
+        .loading-screen.hidden { opacity: 0; pointer-events: none; }
+        .loading-logo-img { height: 60px; margin-bottom: 30px; }
+        .loading-bar { width: 200px; height: 2px; background: var(--border-subtle); border-radius: 2px; overflow: hidden; }
+        .loading-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); border-radius: 2px; animation: loadingProgress 2s ease-out forwards; }
+        .loading-text { margin-top: 16px; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; }
+        #webgl-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .magnetic-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
+        .gradient-text { background: linear-gradient(135deg, var(--accent-gold), #F0D78C, var(--accent-blue), var(--accent-gold)); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradientShift 4s ease infinite; }
+        .typewriter-cursor { display: inline-block; width: 3px; height: 1em; background: var(--accent-gold); margin-left: 4px; animation: blink 1s step-end infinite; vertical-align: middle; }
+        .tilt-card { transform-style: preserve-3d; transition: transform 0.1s ease-out; position: relative; }
+        .tilt-card-shine { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, transparent 100%); border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 10; }
+        .tilt-card:hover .tilt-card-shine { opacity: 1; }
+        .audio-viz-section { padding: 120px 40px; position: relative; background: var(--bg-secondary); overflow: hidden; }
+        .audio-viz-canvas { width: 100%; height: 200px; margin-top: 40px; }
+        .horizontal-scroll-section { height: 300vh; position: relative; }
+        .horizontal-scroll-container { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; }
+        .horizontal-scroll-track { display: flex; gap: 40px; padding: 0 60px; will-change: transform; }
+        .horizontal-card { flex-shrink: 0; width: 400px; height: 500px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
+        .horizontal-card:hover { border-color: var(--border-accent); transform: scale(1.02); }
+        .interactive-diagram { position: relative; cursor: pointer; }
+        .diagram-node { transition: all 0.3s; }
+        .diagram-node:hover { transform: scale(1.05); }
+        .diagram-connection { stroke: var(--accent-gold); stroke-dasharray: 8 4; animation: dashFlow 1s linear infinite; }
+        .page-transition { position: fixed; inset: 0; background: var(--bg-primary); z-index: 9999; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1); }
+        .page-transition.active { transform: translateY(-100%); }
+        .seat-counter { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 4rem; color: var(--accent-gold); display: inline-flex; align-items: center; gap: 8px; }
+        .digit { display: inline-block; width: 0.7em; text-align: center; transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .digit.flip { transform: rotateX(360deg); }
+        .nav-logo-img { height: 36px; width: auto; }
+        .parallax-slow { will-change: transform; }
+        .parallax-fast { will-change: transform; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes loadingProgress { 0% { width: 0; } 100% { width: 100%; } }
+        @keyframes dashFlow { to { stroke-dashoffset: -24; } }
+</style>
+</head>
+<body>
+
+    
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="TheTwenty Logo.png" alt="#TheTwenty" class="loading-logo-img">
+        <div class="loading-bar">
+            <div class="loading-fill"></div>
+        </div>
+        <div class="loading-text">Initializing Experience</div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Page Transition Overlay -->
+    <div class="page-transition" id="pageTransition"></div>
+
+    <!-- WebGL Particle Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+<nav class="nav" id="nav">
+        <a href="index.html" class="nav-logo magnetic-btn"><img src="TheTwenty Logo.png" alt="#TheTwenty" class="nav-logo-img"></a>
+        <div class="nav-links">
+            <a href="kingdom-vision.html">Vision</a>
+            <a href="curriculum.html">Curriculum</a>
+            <a href="careers.html">Careers</a>
+            <a href="faq.html" class="active">FAQ</a>
+            <a href="apply-now.html" class="nav-cta magnetic-btn" data-magnetic>Apply Now</a>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">&#9776;</button>
+    </nav>
+
+    <section class="page-hero">
+        <div class="page-hero-bg"></div>
+        <div class="page-hero-content">
+            <div class="page-hero-eyebrow">Questions & Answers</div>
+            <h1>Questions?<br>We have Got <span class="gradient-text">Answers.</span></h1>
+            <p>Everything you need to know about #TheTwenty. Can not find what you are looking for? Reach out to us directly.</p>
+        </div>
+    </section>
+
+    <section class="faq-categories">
+        <div class="faq-cat-grid">
+            <button class="faq-cat-btn active" onclick="filterFaq('all', this)">All Questions</button>
+            <button class="faq-cat-btn magnetic-btn" data-magnetic onclick="filterFaq('program', this)">The Program</button>
+            <button class="faq-cat-btn magnetic-btn" data-magnetic onclick="filterFaq('eligibility', this)">Eligibility</button>
+            <button class="faq-cat-btn magnetic-btn" data-magnetic onclick="filterFaq('commitment', this)">Commitment</button>
+            <button class="faq-cat-btn magnetic-btn" data-magnetic onclick="filterFaq('after', this)">After The Program</button>
+        </div>
+    </section>
+
+    <section class="section faq-section">
+        <div class="faq-container">
+            <div class="faq-item reveal tilt-card" data-category="program">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Is this program free?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, the program is fully sponsored by the church is building and talent development initiative. There is no cost to participants. The vision is to invest in people first, because the building is only as strong as the people who build it.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="eligibility">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Do I need prior tech experience?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>No. Beginners are welcome. What matters most is your commitment, curiosity, and willingness to learn. We start from fundamentals and build up. If you can use a smartphone, you can start this journey.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="after">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Will I get a job after this program?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>No responsible program can guarantee employment. What we can guarantee is access to practical skills, real-world projects, portfolio development, accountability, community support, and proven job-search systems designed to make you more competitive.</p>
+                    <p>Your results will largely depend on your commitment, consistency, mindset, and willingness to execute. We will provide the roadmap, tools, training, and support. Your future will be shaped by what you do with them.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="program">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How many people will be selected?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>Only twenty participants. This ensures personalized support, accountability, and quality outcomes. We believe in depth over breadth. Each participant gets direct access to mentors, trainers, and the leadership team.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="program">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How long is the program?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>The program consists of two parts:</p>
+                    <ul>
+                        <li><strong>3-Day Intensive Training:</strong> A focused, immersive weekend where you learn the core skills and build your foundational assets.</li>
+                        <li><strong>30-Day Execution Challenge:</strong> Daily accountability, weekly check-ins, and structured action to turn knowledge into results.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="eligibility">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Can non-members apply?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>This depends on your church policy. The primary target is members of the church community, as the program is designed to build people who will also contribute to the building project. However, exceptional candidates from outside may be considered on a case-by-case basis. Please reach out to discuss your situation.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="program">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Why only twenty people?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>To ensure personalized support, accountability, and quality outcomes. We have learned that transformation happens in small groups, not crowds. With 20 people, we can give each participant the attention, feedback, and mentorship they need to truly succeed.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="after">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What happens after I apply?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>After you apply, here is what happens:</p>
+                    <ul>
+                        <li><strong>Application Review:</strong> We review your application within 48 hours.</li>
+                        <li><strong>Selection:</strong> If selected, you will receive an invitation to join the cohort.</li>
+                        <li><strong>Onboarding:</strong> Pre-program orientation and preparation materials.</li>
+                        <li><strong>Training:</strong> The 3-day intensive begins.</li>
+                        <li><strong>Challenge:</strong> 30 days of execution with daily accountability.</li>
+                    </ul>
+                    <p>You will receive all updates via email and WhatsApp.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="commitment">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What if I miss a session?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>Attendance is expected for all 3 days of the intensive training. If you have a genuine emergency, please communicate in advance. For the 30-day challenge, daily check-ins are mandatory. Consistency is the key to transformation, and we are committed to helping you stay on track.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="program">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What makes this different from other programs?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>Because we focus on transformation, not just information. We are not just teaching skills — we are building people who will build the Kingdom. The community, accountability, and mission-driven approach set this apart from generic bootcamps. Plus, it is fully sponsored because we believe in investing in people first.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="commitment">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Do I need a laptop?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>A laptop is strongly recommended. While some tasks can be done on a smartphone, a laptop will significantly improve your productivity and the quality of your deliverables. If you do not have one, please let us know — we may be able to help arrange access.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="commitment">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What is the voluntary covenant?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>Participants who choose to make the commitment voluntarily covenant to support the church is building project from the proceeds of their earnings. This is not mandatory — it is a voluntary expression of gratitude and stewardship. Beyond the financial aspect, the larger vision is to build people before building the building.</p>
+                </div>
+            </div>
+
+            <div class="faq-item reveal tilt-card" data-category="after">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What support do I get after the 30 days?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>Graduates become part of the #TheTwenty alumni community for life. This includes:</p>
+                    <ul>
+                        <li>Access to the WhatsApp community for ongoing support</li>
+                        <li>Monthly alumni meetups and check-ins</li>
+                        <li>Job opportunity sharing within the network</li>
+                        <li>Mentorship from program leadership</li>
+                        <li>Invitation to future cohort events as mentors</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <div class="contact-card reveal tilt-card">
+            <h3>Still Have Questions?</h3>
+            <p>We are here to help. Reach out through any of these channels and we will get back to you within 24 hours.</p>
+            <div class="contact-methods">
+                <a href="#" class="contact-method magnetic-btn" data-magnetic>&#128172; WhatsApp</a>
+                <a href="#" class="contact-method magnetic-btn" data-magnetic>&#128231; Email Us</a>
+                <a href="#" class="contact-method magnetic-btn" data-magnetic>&#128279; LinkedIn</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: var(--bg-primary); text-align: center; padding: 80px 40px;">
+        <div class="reveal">
+            <h2 class="section-title" style="margin-bottom: 24px;">Ready To Join?</h2>
+            <p class="section-subtitle" style="margin-bottom: 40px;">Applications are open. Only 20 spots available.</p>
+            <a href="apply-now.html" class="btn-primary magnetic-btn" data-magnetic style="font-size: 1.1rem; padding: 18px 40px;">
+                Apply For #TheTwenty
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand"><img src="TheTwenty Logo.png" alt="#TheTwenty" class="nav-logo-img" style="height:30px;"></div>
+                <p class="footer-desc">Building people before buildings. A movement of 20 young professionals being equipped for the future while advancing God is work.</p>
+                <div class="footer-social">
+                    <a href="#" title="WhatsApp">&#128172;</a>
+                    <a href="#" title="LinkedIn">&#128279;</a>
+                    <a href="#" title="Instagram">&#128247;</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Program</h4>
+                <a href="kingdom-vision.html">Vision</a>
+                <a href="curriculum.html">Curriculum</a>
+                <a href="careers.html">Careers</a>
+                <a href="faq.html">FAQ</a>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <a href="#">Preparation Guide</a>
+                <a href="faq.html">FAQ</a>
+                <a href="#">Success Stories</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <a href="#">WhatsApp Community</a>
+                <a href="#">Email Us</a>
+                <a href="#">Church Office</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>2026 #TheTwenty. All rights reserved.</span>
+            <span>Built with purpose. Powered by faith.</span>
+        </div>
+    </footer>
+
+    
+
+    <script>
+    (function() {
+        // ===== LOADING SCREEN =====
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 2200);
+        });
+
+        // ===== CUSTOM CURSOR =====
+        const cursorDot = document.getElementById('cursorDot');
+        const cursorRing = document.getElementById('cursorRing');
+        let mouseX = 0, mouseY = 0, dotX = 0, dotY = 0, ringX = 0, ringY = 0;
+        if (window.innerWidth > 768 && cursorDot && cursorRing) {
+            document.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
+            function animateCursor() {
+                dotX += (mouseX - dotX) * 0.2; dotY += (mouseY - dotY) * 0.2;
+                ringX += (mouseX - ringX) * 0.1; ringY += (mouseY - ringY) * 0.1;
+                cursorDot.style.left = dotX + 'px'; cursorDot.style.top = dotY + 'px';
+                cursorRing.style.left = ringX + 'px'; cursorRing.style.top = ringY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+            const hoverElements = document.querySelectorAll('a, button, .tilt-card, .faq-question, input, select, textarea');
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursorRing.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => cursorRing.classList.remove('hovering'));
+            });
+        }
+
+        // ===== WEBGL PARTICLES =====
+        const canvas = document.getElementById('webgl-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3;
+                    this.opacity = Math.random() * 0.5 + 0.1; this.hue = Math.random() > 0.5 ? 45 : 220;
+                }
+                update() {
+                    this.x += this.speedX; this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${this.hue}, 70%, 60%, ${this.opacity})`; ctx.fill();
+                }
+            }
+            for (let i = 0; i < 80; i++) particles.push(new Particle());
+            function drawConnections() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(212, 166, 58, ${0.1 * (1 - dist / 150)})`; ctx.lineWidth = 0.5; ctx.stroke();
+                        }
+                    }
+                }
+            }
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); }); drawConnections();
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        }
+
+        // ===== 3D TILT CARDS =====
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left, y = e.clientY - rect.top;
+                const centerX = rect.width / 2, centerY = rect.height / 2;
+                card.style.transform = `perspective(1000px) rotateX(${(y - centerY) / 10}deg) rotateY(${(centerX - x) / 10}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            card.addEventListener('mouseleave', function() {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
+        // ===== MAGNETIC BUTTONS =====
+        document.querySelectorAll('[data-magnetic]').forEach(btn => {
+            btn.addEventListener('mousemove', function(e) {
+                const rect = btn.getBoundingClientRect();
+                btn.style.transform = `translate(${(e.clientX - rect.left - rect.width / 2) * 0.3}px, ${(e.clientY - rect.top - rect.height / 2) * 0.3}px)`;
+            });
+            btn.addEventListener('mouseleave', function() { btn.style.transform = 'translate(0, 0)'; });
+        });
+
+        // ===== PAGE TRANSITIONS =====
+        const pageTransition = document.getElementById('pageTransition');
+        document.querySelectorAll('a[href]').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && !href.startsWith('#') && !href.startsWith('http') && !href.startsWith('mailto')) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (pageTransition) pageTransition.classList.add('active');
+                    setTimeout(() => { window.location.href = href; }, 600);
+                });
+            }
+        });
+
+        // ===== PARTICLE BURST ON CLICK =====
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) return;
+            const colors = ['#D4A63A', '#2563EB', '#F0D78C', '#94A3B8'];
+            for (let i = 0; i < 12; i++) {
+                const p = document.createElement('div');
+                p.style.cssText = `position: fixed; width: 6px; height: 6px; border-radius: 50%; background: ${colors[Math.floor(Math.random() * colors.length)]}; pointer-events: none; z-index: 99997; left: ${e.clientX}px; top: ${e.clientY}px;`;
+                document.body.appendChild(p);
+                const angle = (Math.PI * 2 * i) / 12, velocity = 50 + Math.random() * 100;
+                let px = e.clientX, py = e.clientY, op = 1;
+                function anim() { px += Math.cos(angle) * velocity * 0.02; py += Math.sin(angle) * velocity * 0.02; op -= 0.02; p.style.left = px + 'px'; p.style.top = py + 'px'; p.style.opacity = op; if (op > 0) requestAnimationFrame(anim); else p.remove(); }
+                anim();
+            }
+        });
+
+        // ===== PARALLAX =====
+        window.addEventListener('scroll', function() {
+            const sy = window.scrollY;
+            document.querySelectorAll('.parallax-fast').forEach(el => { el.style.transform = `translateY(${sy * 0.15}px)`; });
+            document.querySelectorAll('.parallax-slow').forEach(el => { el.style.transform = `translateY(${sy * 0.05}px)`; });
+        });
+
+        // ===== NAV SCROLL =====
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav');
+            if (nav) { if (window.scrollY > 50) nav.classList.add('scrolled'); else nav.classList.remove('scrolled'); }
+        });
+
+        // ===== REVEAL ON SCROLL =====
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // ===== INTERACTIVE DIAGRAM =====
+        document.querySelectorAll('.diagram-node').forEach(node => {
+            node.addEventListener('click', function() {
+                document.querySelectorAll('.diagram-node').forEach(n => n.style.opacity = '0.4');
+                node.style.opacity = '1'; node.style.transform = 'scale(1.05)';
+                setTimeout(() => { document.querySelectorAll('.diagram-node').forEach(n => { n.style.opacity = '1'; n.style.transform = 'scale(1)'; }); }, 1500);
+            });
+        });
+    })();
+
+    function toggleFaq(element) {
+        const item = element.parentElement;
+        const isActive = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(faq => faq.classList.remove('active'));
+        if (!isActive) item.classList.add('active');
+    }
+
+    function toggleMobileMenu() {
+        const links = document.querySelector('.nav-links');
+        if (!links) return;
+        if (links.style.display === 'flex' && links.style.position === 'absolute') {
+            links.style.display = 'none';
+        } else {
+            links.style.display = 'flex'; links.style.position = 'absolute'; links.style.top = '100%';
+            links.style.left = '0'; links.style.right = '0'; links.style.flexDirection = 'column';
+            links.style.background = 'rgba(11,15,23,0.95)'; links.style.padding = '20px';
+            links.style.backdropFilter = 'blur(20px)'; links.style.borderBottom = '1px solid var(--border-subtle)';
+            links.style.gap = '16px';
+        }
+    }
+    </script>
+
+</body>
+</html>

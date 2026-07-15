@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#TheTwenty — Founding Cohort 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0B0F17;
+            --bg-secondary: #111827;
+            --bg-card: #151D2E;
+            --bg-card-hover: #1A2438;
+            --border-subtle: rgba(255,255,255,0.06);
+            --border-accent: rgba(212,166,58,0.3);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-gold: #D4A63A;
+            --accent-gold-dim: rgba(212,166,58,0.15);
+            --accent-blue: #2563EB;
+            --accent-blue-dim: rgba(37,99,235,0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); overflow-x: hidden; line-height: 1.6; cursor: none; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+
+        /* Custom Cursor */
+        .cursor-dot { position: fixed; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-gold); pointer-events: none; z-index: 99999; mix-blend-mode: difference; transition: transform 0.15s ease-out; transform: translate(-50%, -50%); }
+        .cursor-ring { position: fixed; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(212,166,58,0.4); pointer-events: none; z-index: 99998; transition: all 0.2s ease-out; transform: translate(-50%, -50%); }
+        .cursor-ring.hovering { width: 60px; height: 60px; border-width: 3px; border-color: var(--accent-gold); }
+
+        /* Loading Screen */
+        .loading-screen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
+        .loading-screen.hidden { opacity: 0; pointer-events: none; }
+        .loading-logo { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 3rem; margin-bottom: 30px; }
+        .loading-logo span { color: var(--accent-gold); }
+        .loading-bar { width: 200px; height: 2px; background: var(--border-subtle); border-radius: 2px; overflow: hidden; }
+        .loading-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); border-radius: 2px; animation: loadingProgress 2s ease-out forwards; }
+        .loading-text { margin-top: 16px; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; }
+
+        /* WebGL Canvas */
+        #webgl-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+        /* Magnetic Button */
+        .magnetic-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
+
+        /* Gradient Text */
+        .gradient-text { background: linear-gradient(135deg, var(--accent-gold), #F0D78C, var(--accent-blue), var(--accent-gold)); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradientShift 4s ease infinite; }
+
+        /* Typewriter Cursor */
+        .typewriter-cursor { display: inline-block; width: 3px; height: 1em; background: var(--accent-gold); margin-left: 4px; animation: blink 1s step-end infinite; vertical-align: middle; }
+
+        /* 3D Tilt Card */
+        .tilt-card { transform-style: preserve-3d; transition: transform 0.1s ease-out; position: relative; }
+        .tilt-card-shine { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, transparent 100%); border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 10; }
+        .tilt-card:hover .tilt-card-shine { opacity: 1; }
+
+        /* Particle Burst Canvas */
+        .particle-burst { position: fixed; pointer-events: none; z-index: 99997; }
+
+        /* Audio Visualizer Section */
+        .audio-viz-section { padding: 120px 40px; position: relative; background: var(--bg-secondary); overflow: hidden; }
+        .audio-viz-canvas { width: 100%; height: 200px; margin-top: 40px; }
+
+        /* Horizontal Scroll Section */
+        .horizontal-scroll-section { height: 300vh; position: relative; }
+        .horizontal-scroll-container { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; }
+        .horizontal-scroll-track { display: flex; gap: 40px; padding: 0 60px; will-change: transform; }
+        .horizontal-card { flex-shrink: 0; width: 400px; height: 500px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
+        .horizontal-card:hover { border-color: var(--border-accent); transform: scale(1.02); }
+
+        /* Interactive Diagram */
+        .interactive-diagram { position: relative; cursor: pointer; }
+        .diagram-node { transition: all 0.3s; }
+        .diagram-node:hover { transform: scale(1.05); }
+        .diagram-connection { stroke: var(--accent-gold); stroke-dasharray: 8 4; animation: dashFlow 1s linear infinite; }
+
+        /* Page Transition */
+        .page-transition { position: fixed; inset: 0; background: var(--bg-primary); z-index: 9999; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1); }
+        .page-transition.active { transform: translateY(-100%); }
+
+        /* Seat Counter Digits */
+        .seat-counter { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 4rem; color: var(--accent-gold); display: inline-flex; align-items: center; gap: 8px; }
+        .digit { display: inline-block; width: 0.7em; text-align: center; transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .digit.flip { transform: rotateX(360deg); }
+
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(11, 15, 23, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); transition: all 0.3s ease; }
+        .nav.scrolled { padding: 14px 40px; background: rgba(11, 15, 23, 0.95); }
+        .nav-logo { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-logo span { color: var(--accent-gold); }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent-gold); transition: width 0.3s; }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-cta { background: var(--accent-gold); color: var(--bg-primary); padding: 10px 24px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; transition: all 0.2s; border: none; cursor: none; }
+        .nav-cta:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(212,166,58,0.3); }
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: none; }
+
+        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; padding: 120px 40px 80px; overflow: hidden; }
+        .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(37,99,235,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(212,166,58,0.06) 0%, transparent 50%); }
+        .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%); }
+        .hero-content { max-width: 1200px; width: 100%; position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+        .hero-left { animation: fadeInUp 0.8s ease-out; }
+        .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-gold-dim); border: 1px solid var(--border-accent); color: var(--accent-gold); padding: 8px 16px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+        .hero-eyebrow::before { content: ''; width: 6px; height: 6px; background: var(--accent-gold); border-radius: 50%; animation: pulse 2s infinite; }
+        .hero-headline { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px; min-height: 2.5em; }
+        .hero-headline .highlight { background: linear-gradient(135deg, var(--accent-gold), #F0D78C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subheadline { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; margin-bottom: 40px; max-width: 500px; }
+        .hero-cta-group { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
+        .btn-primary { background: var(--accent-gold); color: var(--bg-primary); padding: 16px 32px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; cursor: none; font-family: 'Inter', sans-serif; }
+        .btn-primary:hover { transform: scale(1.03); box-shadow: 0 0 40px rgba(212,166,58,0.3); }
+        .btn-secondary { background: transparent; color: var(--text-primary); padding: 16px 32px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-subtle); transition: all 0.2s; cursor: none; font-family: 'Inter', sans-serif; }
+        .btn-secondary:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .trust-bar { display: flex; gap: 24px; flex-wrap: wrap; }
+        .trust-item { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem; }
+        .trust-item svg { color: var(--accent-gold); width: 16px; height: 16px; }
+
+        .hero-right { position: relative; animation: fadeInUp 0.8s ease-out 0.2s both; }
+        .hero-visual { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 24px; overflow: hidden; background: var(--bg-card); border: 1px solid var(--border-subtle); }
+        .hero-visual::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(212,166,58,0.1)); z-index: 1; }
+        .hero-visual img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+        .hero-visual-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px; background: linear-gradient(transparent, rgba(11,15,23,0.9)); z-index: 2; }
+        .visual-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(212,166,58,0.2); color: var(--accent-gold); padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; margin-bottom: 8px; }
+        .visual-text { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.1rem; }
+
+        .float-card { position: absolute; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 16px 20px; backdrop-filter: blur(10px); animation: float 6s ease-in-out infinite; }
+        .float-card-1 { top: -20px; right: -20px; animation-delay: 0s; }
+        .float-card-2 { bottom: 40px; left: -30px; animation-delay: 1s; }
+        .float-card-3 { bottom: -20px; right: 40px; animation-delay: 2s; }
+        .float-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .float-value { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--accent-gold); }
+        .float-sub { font-size: 0.75rem; color: var(--text-secondary); }
+
+        .marquee-section { padding: 40px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); overflow: hidden; background: var(--bg-secondary); }
+        .marquee-track { display: flex; animation: marquee 30s linear infinite; width: max-content; }
+        .marquee-item { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2rem, 4vw, 3.5rem); color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.15); white-space: nowrap; padding: 0 40px; letter-spacing: -0.02em; }
+        .marquee-item.active { color: var(--accent-gold); -webkit-text-stroke: none; }
+
+        .section { padding: 120px 40px; position: relative; }
+        .section-header { max-width: 800px; margin: 0 auto 80px; text-align: center; }
+        .section-eyebrow { color: var(--accent-gold); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; }
+        .section-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
+        .section-subtitle { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; }
+
+        .transformation { background: var(--bg-primary); }
+        .comparison-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .comparison-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; transition: all 0.3s ease; }
+        .comparison-card:hover { transform: translateY(-8px); border-color: var(--border-accent); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .comparison-card.negative { border-left: 4px solid #EF4444; }
+        .comparison-card.positive { border-left: 4px solid var(--accent-gold); }
+        .comparison-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.3rem; margin-bottom: 24px; }
+        .comparison-list { list-style: none; }
+        .comparison-list li { display: flex; align-items: center; gap: 12px; padding: 12px 0; color: var(--text-secondary); border-bottom: 1px solid var(--border-subtle); }
+        .comparison-list li:last-child { border-bottom: none; }
+        .comparison-list .icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
+        .comparison-list .icon.x { background: rgba(239,68,68,0.15); color: #EF4444; }
+        .comparison-list .icon.check { background: var(--accent-gold-dim); color: var(--accent-gold); }
+
+        .big-why { background: var(--bg-secondary); position: relative; overflow: hidden; }
+        .big-why::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(212,166,58,0.05) 0%, transparent 70%); pointer-events: none; }
+        .journey-diagram { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; position: relative; }
+        .journey-step { display: flex; align-items: center; gap: 24px; padding: 24px 0; position: relative; }
+        .journey-step:not(:last-child)::after { content: ''; position: absolute; left: 28px; top: 60px; width: 2px; height: calc(100% - 20px); background: linear-gradient(to bottom, var(--accent-gold), transparent); }
+        .journey-icon { width: 56px; height: 56px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; z-index: 2; transition: all 0.3s; }
+        .journey-step:hover .journey-icon { background: var(--accent-gold-dim); border-color: var(--accent-gold); transform: scale(1.1); }
+        .journey-content h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+        .journey-content p { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .program { background: var(--bg-primary); }
+        .program-cards { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .program-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px 32px; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .program-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); opacity: 0; transition: opacity 0.3s; }
+        .program-card:hover { transform: translateY(-8px); border-color: var(--border-accent); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .program-card:hover::before { opacity: 1; }
+        .program-day { display: inline-block; background: var(--accent-gold-dim); color: var(--accent-gold); padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 20px; }
+        .program-icon { width: 64px; height: 64px; border-radius: 20px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 24px; }
+        .program-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.4rem; margin-bottom: 16px; }
+        .program-card p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; }
+        .program-details { list-style: none; }
+        .program-details li { display: flex; align-items: center; gap: 10px; padding: 8px 0; color: var(--text-secondary); font-size: 0.85rem; }
+        .program-details li::before { content: '->'; color: var(--accent-gold); font-weight: 700; }
+
+        .challenge { background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); position: relative; }
+        .challenge::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(37,99,235,0.08) 0%, transparent 60%); }
+        .metrics-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .metric-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; display: flex; align-items: center; gap: 20px; transition: all 0.3s; }
+        .metric-card:hover { border-color: var(--border-accent); transform: translateX(8px); }
+        .metric-icon { width: 56px; height: 56px; border-radius: 16px; background: var(--accent-gold-dim); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .metric-content h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.8rem; color: var(--accent-gold); margin-bottom: 4px; }
+        .metric-content p { color: var(--text-secondary); font-size: 0.9rem; }
+        .challenge-tracker { max-width: 800px; margin: 60px auto 0; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; }
+        .tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .tracker-header h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; }
+        .tracker-progress { color: var(--accent-gold); font-weight: 700; font-size: 0.9rem; }
+        .tracker-bar { height: 8px; background: var(--bg-secondary); border-radius: 100px; overflow: hidden; margin-bottom: 24px; }
+        .tracker-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); border-radius: 100px; transition: width 2s ease-out; }
+        .tracker-days { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; }
+        .tracker-day { aspect-ratio: 1; border-radius: 8px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); transition: all 0.3s; cursor: pointer; }
+        .tracker-day.completed { background: var(--accent-gold-dim); color: var(--accent-gold); }
+        .tracker-day:hover { transform: scale(1.1); }
+
+        .qualifications { background: var(--bg-primary); }
+        .qual-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .qual-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; transition: all 0.3s; cursor: pointer; }
+        .qual-card:hover { transform: translateY(-4px); border-color: var(--border-accent); }
+        .qual-number { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 2.5rem; color: rgba(255,255,255,0.05); line-height: 1; margin-bottom: 16px; }
+        .qual-card h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
+        .qual-card p { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .counter-section { background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary)); position: relative; overflow: hidden; }
+        .counter-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(212,166,58,0.08) 0%, transparent 60%); }
+        .counter-content { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 2; }
+        .counter-display { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(4rem, 10vw, 8rem); line-height: 1; margin: 40px 0; background: linear-gradient(135deg, var(--accent-gold), #F0D78C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.04em; }
+        .counter-label { color: var(--text-secondary); font-size: 1.1rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+        .counter-quote { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: clamp(1.2rem, 3vw, 1.8rem); line-height: 1.4; margin: 40px 0; color: var(--text-secondary); }
+        .counter-quote .highlight { color: var(--text-primary); }
+
+        .faq { background: var(--bg-secondary); }
+        .faq-container { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; margin-bottom: 12px; overflow: hidden; transition: all 0.3s; }
+        .faq-item:hover { border-color: var(--border-accent); }
+        .faq-question { padding: 24px 28px; display: flex; justify-content: space-between; align-items: center; cursor: none; font-weight: 600; font-size: 1rem; transition: color 0.2s; }
+        .faq-question:hover { color: var(--accent-gold); }
+        .faq-icon { width: 24px; height: 24px; transition: transform 0.3s; flex-shrink: 0; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; }
+        .faq-item.active .faq-answer { max-height: 500px; padding: 0 28px 24px; }
+        .faq-answer p { color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; }
+
+        .final-cta { background: var(--bg-primary); position: relative; overflow: hidden; }
+        .final-cta::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(37,99,235,0.06) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(212,166,58,0.06) 0%, transparent 50%); }
+        .final-cta-content { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 2; }
+        .final-cta h2 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2rem, 5vw, 4rem); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
+        .final-cta p { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        .footer { background: var(--bg-secondary); border-top: 1px solid var(--border-subtle); padding: 60px 40px 30px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; }
+        .footer-brand { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.5rem; margin-bottom: 16px; }
+        .footer-brand span { color: var(--accent-gold); }
+        .footer-desc { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px; }
+        .footer-social { display: flex; gap: 12px; }
+        .footer-social a { width: 40px; height: 40px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); text-decoration: none; transition: all 0.2s; cursor: none; }
+        .footer-social a:hover { border-color: var(--accent-gold); color: var(--accent-gold); transform: translateY(-2px); }
+        .footer-col h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 20px; color: var(--text-primary); }
+        .footer-col a { display: block; color: var(--text-secondary); text-decoration: none; padding: 6px 0; font-size: 0.9rem; transition: color 0.2s; cursor: none; }
+        .footer-col a:hover { color: var(--accent-gold); }
+        .footer-bottom { max-width: 1200px; margin: 40px auto 0; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 0.8rem; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes loadingProgress { 0% { width: 0; } 100% { width: 100%; } }
+        @keyframes dashFlow { to { stroke-dashoffset: -24; } }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 48px; max-width: 500px; width: 90%; text-align: center; transform: scale(0.9); transition: transform 0.3s; position: relative; }
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-icon { width: 80px; height: 80px; border-radius: 50%; background: var(--accent-gold-dim); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 24px; }
+        .modal h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.8rem; margin-bottom: 12px; }
+        .modal p { color: var(--text-secondary); margin-bottom: 32px; }
+        .modal-actions { display: flex; flex-direction: column; gap: 12px; }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: none; }
+
+        @media (max-width: 1024px) {
+            .hero-content { grid-template-columns: 1fr; gap: 60px; }
+            .program-cards { grid-template-columns: 1fr; }
+            .qual-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-content { grid-template-columns: 1fr 1fr; }
+            .cursor-dot, .cursor-ring { display: none; }
+            body { cursor: auto; }
+            .nav-cta, .btn-primary, .btn-secondary, .faq-question, .footer-social a, .footer-col a { cursor: pointer; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .section { padding: 80px 20px; }
+            .hero { padding: 100px 20px 60px; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .metrics-grid { grid-template-columns: 1fr; }
+            .qual-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; gap: 40px; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+            .float-card { display: none; }
+            .horizontal-card { width: 300px; height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo"><img src="TheTwenty Logo.png" alt="#TheTwenty" style="height:48px;width:auto;display:block;margin:0 auto;"></div>
+        <div class="loading-bar">
+            <div class="loading-fill"></div>
+        </div>
+        <div class="loading-text">Initializing Experience</div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Page Transition Overlay -->
+    <div class="page-transition" id="pageTransition"></div>
+
+    <!-- WebGL Particle Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <nav class="nav" id="nav">
+        <a href="index.html" class="nav-logo magnetic-btn"><img src="TheTwenty Logo.png" alt="#TheTwenty" style="height:36px;width:auto;display:block;"></a>
+        <div class="nav-links">
+            <a href="kingdom-vision.html" class="magnetic-btn">Vision</a>
+            <a href="curriculum.html" class="magnetic-btn">Curriculum</a>
+            <a href="careers.html" class="magnetic-btn">Careers</a>
+            <a href="faq.html" class="magnetic-btn">FAQ</a>
+            <a href="apply-now.html" class="nav-cta magnetic-btn">Apply Now</a>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">&#9776;</button>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <div class="hero-left">
+                <div class="hero-eyebrow">Founding Cohort 2026</div>
+                <h1 class="hero-headline" id="heroHeadline">
+                    <span id="typewriterText"></span><span class="typewriter-cursor"></span>
+                </h1>
+                <p class="hero-subheadline">
+                    One opportunity to learn relevant skills. One opportunity to build something real. 
+                    One opportunity to position yourself for better career opportunities. Welcome to #TheTwenty.
+                </p>
+                <div class="hero-cta-group">
+                    <a href="apply-now.html" class="btn-primary magnetic-btn" data-magnetic>
+                        Apply For #TheTwenty
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="kingdom-vision.html" class="btn-secondary magnetic-btn" data-magnetic>
+                        Learn More
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+                    </a>
+                </div>
+                <div class="trust-bar">
+                    <div class="trust-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        20 Participants
+                    </div>
+                    <div class="trust-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        3-Day Intensive
+                    </div>
+                    <div class="trust-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        30-Day Challenge
+                    </div>
+                    <div class="trust-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        Kingdom Community
+                    </div>
+                </div>
+            </div>
+            <div class="hero-right parallax-slow">
+                <div class="hero-visual tilt-card" id="heroVisual">
+                    <div class="tilt-card-shine"></div>
+                    <img src="hero image.webp" alt="TheTwenty cohort experience">
+                    <div class="hero-visual-overlay">
+                        <div class="visual-tag">
+                            <span style="width:6px;height:6px;background:#D4A63A;border-radius:50%;display:inline-block;margin-right:6px;"></span>
+                            Live Cohort
+                        </div>
+                        <div class="visual-text">Building the future, together.</div>
+                    </div>
+                </div>
+                <div class="float-card float-card-1 parallax-fast">
+                    <div class="float-label">Seats Remaining</div>
+                    <div class="seat-counter" id="seatCounter">
+                        <span class="digit" id="digit1">0</span><span class="digit" id="digit2">7</span>
+                    </div>
+                    <div class="float-sub">of 20 spots</div>
+                </div>
+                <div class="float-card float-card-2 parallax-fast">
+                    <div class="float-label">Target Income</div>
+                    <div class="float-value gradient-text">$2,000+</div>
+                    <div class="float-sub">monthly potential</div>
+                </div>
+                <div class="float-card float-card-3 parallax-fast">
+                    <div class="float-label">Duration</div>
+                    <div class="float-value gradient-text">30 Days</div>
+                    <div class="float-sub">to career ready</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="marquee-section">
+        <div class="marquee-track">
+            <span class="marquee-item">SKILLS</span>
+            <span class="marquee-item active">TRANSFORMATION</span>
+            <span class="marquee-item">COMMUNITY</span>
+            <span class="marquee-item active">PURPOSE</span>
+            <span class="marquee-item">CAREER</span>
+            <span class="marquee-item active">KINGDOM IMPACT</span>
+            <span class="marquee-item">GROWTH</span>
+            <span class="marquee-item active">#THETWENTY</span>
+            <span class="marquee-item">SKILLS</span>
+            <span class="marquee-item active">TRANSFORMATION</span>
+            <span class="marquee-item">COMMUNITY</span>
+            <span class="marquee-item active">PURPOSE</span>
+            <span class="marquee-item">CAREER</span>
+            <span class="marquee-item active">KINGDOM IMPACT</span>
+            <span class="marquee-item">GROWTH</span>
+            <span class="marquee-item active">#THETWENTY</span>
+        </div>
+    </section>
+
+    <section class="section transformation" id="vision">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">The Difference</div>
+            <h2 class="section-title">Most Programs Sell Skills.<br>We Build <span class="gradient-text">Transformation.</span></h2>
+        </div>
+        <div class="comparison-grid">
+            <div class="comparison-card negative reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <h3>What We Do not Promise</h3>
+                <ul class="comparison-list">
+                    <li><span class="icon x">X</span> AI Training Only</li>
+                    <li><span class="icon x">X</span> Resume Writing Only</li>
+                    <li><span class="icon x">X</span> LinkedIn Optimization Only</li>
+                    <li><span class="icon x">X</span> Generic Career Advice</li>
+                    <li><span class="icon x">X</span> Information Without Action</li>
+                </ul>
+            </div>
+            <div class="comparison-card positive reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <h3>Who You Become</h3>
+                <ul class="comparison-list">
+                    <li><span class="icon check">&#10003;</span> Employable Professional</li>
+                    <li><span class="icon check">&#10003;</span> Problem Solver</li>
+                    <li><span class="icon check">&#10003;</span> Builder &amp; Creator</li>
+                    <li><span class="icon check">&#10003;</span> Kingdom Leader</li>
+                    <li><span class="icon check">&#10003;</span> Community Member</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="section big-why">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">The Vision</div>
+            <h2 class="section-title">We Are Not Just Building<br>A Cathedral. We Are Building<br><span class="gradient-text">The People</span> Who Will Build It.</h2>
+        </div>
+        <div class="journey-diagram reveal interactive-diagram" id="journeyDiagram">
+            <svg style="position:absolute; top:0; left:28px; width:2px; height:100%; z-index:1;" id="journeySvg">
+                <line class="diagram-connection" x1="0" y1="0" x2="0" y2="100%" id="journeyLine"/>
+            </svg>
+            <div class="journey-step diagram-node" data-step="1">
+                <div class="journey-icon">&#128100;</div>
+                <div class="journey-content">
+                    <h4>People</h4>
+                    <p>Identifying 20 talented young people with potential but no direction</p>
+                </div>
+            </div>
+            <div class="journey-step diagram-node" data-step="2">
+                <div class="journey-icon">&#128295;</div>
+                <div class="journey-content">
+                    <h4>Skills</h4>
+                    <p>Equipping with AI, technology, and career development expertise</p>
+                </div>
+            </div>
+            <div class="journey-step diagram-node" data-step="3">
+                <div class="journey-icon">&#128188;</div>
+                <div class="journey-content">
+                    <h4>Careers</h4>
+                    <p>Positioning for global opportunities and sustainable income</p>
+                </div>
+            </div>
+            <div class="journey-step diagram-node" data-step="4">
+                <div class="journey-icon">&#127758;</div>
+                <div class="journey-content">
+                    <h4>Impact</h4>
+                    <p>Creating Kingdom-minded professionals who advance God is work</p>
+                </div>
+            </div>
+            <div class="journey-step diagram-node" data-step="5">
+                <div class="journey-icon">&#9962;</div>
+                <div class="journey-content">
+                    <h4>Cathedral</h4>
+                    <p>Building the physical structure through the people we have raised</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Audio Visualizer Section -->
+    <section class="audio-viz-section" id="audioViz">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">The Rhythm</div>
+            <h2 class="section-title">Every Day Counts.<br><span class="gradient-text">Every Action Matters.</span></h2>
+            <p class="section-subtitle">Watch your progress come alive as you build momentum through the 30-day challenge.</p>
+        </div>
+        <canvas class="audio-viz-canvas" id="audioVizCanvas"></canvas>
+    </section>
+
+    <section class="section program" id="program">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">The Experience</div>
+            <h2 class="section-title">Three Days. One<br><span class="gradient-text">Transformation.</span></h2>
+            <p class="section-subtitle">A structured, intensive program designed to take you from potential to professional in 72 hours.</p>
+        </div>
+        <div class="program-cards">
+            <div class="program-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="program-day">Day One</div>
+                <div class="program-icon">&#129504;</div>
+                <h3>Future-Proof Your Thinking</h3>
+                <p>Understand where opportunities are emerging in an AI-powered world and how to position yourself.</p>
+                <ul class="program-details">
+                    <li>Understanding AI &amp; LLMs</li>
+                    <li>Prompt Engineering</li>
+                    <li>AI Agents &amp; Automation</li>
+                    <li>Future of Work</li>
+                </ul>
+            </div>
+            <div class="program-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="program-day">Day Two</div>
+                <div class="program-icon">&#128187;</div>
+                <h3>Build Real Projects</h3>
+                <p>Choose your track and build tangible deliverables that make you immediately employable.</p>
+                <ul class="program-details">
+                    <li>ATS Resume &amp; Cover Letter</li>
+                    <li>Portfolio Website</li>
+                    <li>LinkedIn Profile Optimization</li>
+                    <li>Content System Setup</li>
+                </ul>
+            </div>
+            <div class="program-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="program-day">Day Three</div>
+                <div class="program-icon">&#128640;</div>
+                <h3>Launch Your Career</h3>
+                <p>Master the systems and strategies to secure opportunities and build lasting professional presence.</p>
+                <ul class="program-details">
+                    <li>Job Search Systems</li>
+                    <li>LinkedIn Authority</li>
+                    <li>Networking Strategies</li>
+                    <li>Interview Preparation</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Horizontal Scroll Section -->
+    <section class="horizontal-scroll-section" id="horizontalSection">
+        <div class="horizontal-scroll-container">
+            <div class="horizontal-scroll-track" id="horizontalTrack">
+                <div class="horizontal-card">
+                    <div class="program-icon" style="margin-bottom:20px;">&#128200;</div>
+                    <h3 style="font-family:Montserrat;font-weight:700;font-size:1.5rem;margin-bottom:16px;">Day 1-10: Foundation</h3>
+                    <p style="color:var(--text-secondary);line-height:1.6;">Build your portfolio, optimize your profiles, and establish your professional presence across all platforms.</p>
+                </div>
+                <div class="horizontal-card">
+                    <div class="program-icon" style="margin-bottom:20px;">&#128640;</div>
+                    <h3 style="font-family:Montserrat;font-weight:700;font-size:1.5rem;margin-bottom:16px;">Day 11-20: Acceleration</h3>
+                    <p style="color:var(--text-secondary);line-height:1.6;">Ramp up applications, expand your network, and start creating content that positions you as an authority.</p>
+                </div>
+                <div class="horizontal-card">
+                    <div class="program-icon" style="margin-bottom:20px;">&#127942;</div>
+                    <h3 style="font-family:Montserrat;font-weight:700;font-size:1.5rem;margin-bottom:16px;">Day 21-30: Mastery</h3>
+                    <p style="color:var(--text-secondary);line-height:1.6;">Interview preparation, offer negotiation, and transitioning from job seeker to employed professional.</p>
+                </div>
+                <div class="horizontal-card">
+                    <div class="program-icon" style="margin-bottom:20px;">&#127775;</div>
+                    <h3 style="font-family:Montserrat;font-weight:700;font-size:1.5rem;margin-bottom:16px;">Beyond Day 30</h3>
+                    <p style="color:var(--text-secondary);line-height:1.6;">Join the alumni network, mentor the next cohort, and continue building your Kingdom impact career.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section challenge" id="challenge">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">Execution</div>
+            <h2 class="section-title">Training Is Good.<br><span class="gradient-text">Execution</span> Changes Lives.</h2>
+            <p class="section-subtitle">The 30-Day Challenge turns knowledge into results through daily accountability and action.</p>
+        </div>
+        <div class="metrics-grid reveal">
+            <div class="metric-card tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="metric-icon">&#128231;</div>
+                <div class="metric-content">
+                    <h4>60</h4>
+                    <p>Job Applications Target</p>
+                </div>
+            </div>
+            <div class="metric-card tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="metric-icon">&#128241;</div>
+                <div class="metric-content">
+                    <h4>30</h4>
+                    <p>LinkedIn Posts</p>
+                </div>
+            </div>
+            <div class="metric-card tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="metric-icon">&#129309;</div>
+                <div class="metric-content">
+                    <h4>300</h4>
+                    <p>New Connections</p>
+                </div>
+            </div>
+            <div class="metric-card tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="metric-icon">&#128193;</div>
+                <div class="metric-content">
+                    <h4>100%</h4>
+                    <p>Portfolio Complete</p>
+                </div>
+            </div>
+        </div>
+        <div class="challenge-tracker reveal">
+            <div class="tracker-header">
+                <h4>30-Day Progress Tracker</h4>
+                <span class="tracker-progress">Interactive Demo</span>
+            </div>
+            <div class="tracker-bar">
+                <div class="tracker-fill" id="trackerFill"></div>
+            </div>
+            <div class="tracker-days" id="trackerDays"></div>
+        </div>
+    </section>
+
+    <section class="section qualifications">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">Who Should Apply</div>
+            <h2 class="section-title">Are You<br><span class="gradient-text">One of The Twenty?</span></h2>
+        </div>
+        <div class="qual-grid">
+            <div class="qual-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="qual-number">01</div>
+                <h4>Gen Z (18-35)</h4>
+                <p>Students, graduates, NYSC members, or early career professionals ready for growth.</p>
+            </div>
+            <div class="qual-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="qual-number">02</div>
+                <h4>Feeling Stuck</h4>
+                <p>You feel behind and want direction, not just another online course.</p>
+            </div>
+            <div class="qual-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="qual-number">03</div>
+                <h4>Tech Curious</h4>
+                <p>Interested in AI, technology, and the future of work. No experience required.</p>
+            </div>
+            <div class="qual-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="qual-number">04</div>
+                <h4>Committed</h4>
+                <p>Willing to show up, execute, and support the community building vision.</p>
+            </div>
+            <div class="qual-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="qual-number">05</div>
+                <h4>Community Minded</h4>
+                <p>Believe in growth, purpose, and Kingdom impact beyond personal gain.</p>
+            </div>
+            <div class="qual-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="qual-number">06</div>
+                <h4>Action Taker</h4>
+                <p>Ready to apply for jobs, build your brand, and create opportunities daily.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section counter-section">
+        <div class="counter-content reveal">
+            <div class="section-eyebrow">Limited Spots</div>
+            <div class="seat-counter" style="font-size: clamp(4rem, 10vw, 8rem); margin: 40px 0;">
+                <span class="digit" id="bigDigit1">0</span><span class="digit" id="bigDigit2">7</span><span style="font-size:0.5em; color: var(--text-muted);">/20</span>
+            </div>
+            <div class="counter-label">Seats Remaining</div>
+            <div class="counter-quote">
+                "Years from now, you will either say<br>
+                <span class="highlight">'I Joined'</span> or <span class="highlight">'I Missed It.'</span>"
+            </div>
+            <a href="apply-now.html" class="btn-primary magnetic-btn" data-magnetic style="font-size: 1.1rem; padding: 18px 40px;">
+                Secure Your Spot
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <section class="section faq" id="faq">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">Questions</div>
+            <h2 class="section-title">We have Got<br><span class="gradient-text">Answers.</span></h2>
+        </div>
+        <div class="faq-container">
+            <div class="faq-item reveal">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Is this program free?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>The program is fully sponsored by the church is building and talent development initiative. There is no cost to participants. The vision is to invest in people first, because the building is only as strong as the people who build it.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Do I need prior tech experience?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>No. Beginners are welcome. What matters most is your commitment, curiosity, and willingness to learn. We start from fundamentals and build up. If you can use a smartphone, you can start this journey.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Will I get a job after this program?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>No responsible program can guarantee employment. What we can guarantee is access to practical skills, real-world projects, portfolio development, accountability, community support, and proven job-search systems designed to make you more competitive. Your results will largely depend on your commitment, consistency, mindset, and willingness to execute. We will provide the roadmap, tools, training, and support. Your future will be shaped by what you do with them.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How many people will be selected?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>Only twenty participants. This ensures personalized support, accountability, and quality outcomes. We believe in depth over breadth.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What happens after I apply?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>Application review, then Selection, then Onboarding, then Training. You will receive updates via email and WhatsApp. Selected participants will be invited to an orientation session before the program begins.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What makes this different from other programs?</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="faq-answer">
+                    <p>Because we focus on transformation, not just information. We are not just teaching skills, we are building people who will build the Kingdom. The community, accountability, and mission-driven approach set this apart from generic bootcamps.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section final-cta">
+        <div class="final-cta-content reveal">
+            <h2>You are Not One Skill Away.<br>You are One <span class="gradient-text">Decision</span> Away.</h2>
+            <p>Join the Founding Twenty. Become part of a generation being equipped for the future while helping build something greater than themselves.</p>
+            <a href="apply-now.html" class="btn-primary magnetic-btn" data-magnetic style="font-size: 1.1rem; padding: 18px 40px;">
+                Apply For #TheTwenty
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand">#The<span>Twenty</span></div>
+                <p class="footer-desc">Building people before buildings. A movement of 20 young professionals being equipped for the future while advancing God is work.</p>
+                <div class="footer-social">
+                    <a href="#" title="WhatsApp">&#128172;</a>
+                    <a href="#" title="LinkedIn">&#128279;</a>
+                    <a href="#" title="Instagram">&#128247;</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Program</h4>
+                <a href="kingdom-vision.html">Vision</a>
+                <a href="curriculum.html">Curriculum</a>
+                <a href="careers.html">Careers</a>
+                <a href="faq.html">FAQ</a>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <a href="#">Preparation Guide</a>
+                <a href="faq.html">FAQ</a>
+                <a href="#">Success Stories</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <a href="#">WhatsApp Community</a>
+                <a href="#">Email Us</a>
+                <a href="#">Church Office</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>2026 #TheTwenty. All rights reserved.</span>
+            <span>Built with purpose. Powered by faith.</span>
+        </div>
+    </footer>
+
+    <script>
+    (function() {
+        // ===== 1. LOADING SCREEN =====
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 2200);
+        });
+
+        // ===== 2. CUSTOM CURSOR =====
+        const cursorDot = document.getElementById('cursorDot');
+        const cursorRing = document.getElementById('cursorRing');
+        let mouseX = 0, mouseY = 0;
+        let dotX = 0, dotY = 0;
+        let ringX = 0, ringY = 0;
+
+        if (window.innerWidth > 768 && cursorDot && cursorRing) {
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function animateCursor() {
+                dotX += (mouseX - dotX) * 0.2;
+                dotY += (mouseY - dotY) * 0.2;
+                ringX += (mouseX - ringX) * 0.1;
+                ringY += (mouseY - ringY) * 0.1;
+                cursorDot.style.left = dotX + 'px';
+                cursorDot.style.top = dotY + 'px';
+                cursorRing.style.left = ringX + 'px';
+                cursorRing.style.top = ringY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Hover effects for interactive elements
+            const hoverElements = document.querySelectorAll('a, button, .tilt-card, .faq-question, input, select, textarea');
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursorRing.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => cursorRing.classList.remove('hovering'));
+            });
+        }
+
+        // ===== 3. WEBGL PARTICLE BACKGROUND (Pure Canvas, No External Libs) =====
+        const canvas = document.getElementById('webgl-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const particleCount = 80;
+            let animationId;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.speedY = (Math.random() - 0.5) * 0.3;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                    this.hue = Math.random() > 0.5 ? 45 : 220; // Gold or Blue
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${this.hue}, 70%, 60%, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+
+            function drawConnections() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(212, 166, 58, ${0.1 * (1 - dist / 150)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                drawConnections();
+                animationId = requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        }
+
+        // ===== 4. TYPEWRITER EFFECT =====
+        const typewriterText = document.getElementById('typewriterText');
+        const fullText = "You are Not Behind. You are Just One Opportunity Away.";
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function typeWriter() {
+            if (!typewriterText) return;
+            const currentText = fullText.substring(0, charIndex);
+            typewriterText.textContent = currentText;
+
+            if (!isDeleting && charIndex < fullText.length) {
+                charIndex++;
+                setTimeout(typeWriter, 50 + Math.random() * 50);
+            } else if (isDeleting && charIndex > 0) {
+                charIndex--;
+                setTimeout(typeWriter, 30);
+            } else if (charIndex === fullText.length) {
+                setTimeout(() => { isDeleting = true; typeWriter(); }, 3000);
+            } else if (charIndex === 0) {
+                isDeleting = false;
+                setTimeout(typeWriter, 500);
+            }
+        }
+        setTimeout(typeWriter, 2500);
+
+        // ===== 5. 3D TILT CARDS =====
+        const tiltCards = document.querySelectorAll('.tilt-card');
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+                const shine = card.querySelector('.tilt-card-shine');
+                if (shine) {
+                    shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.2) 0%, transparent 60%)`;
+                }
+            });
+            card.addEventListener('mouseleave', function() {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
+        // ===== 6. REAL-TIME SEAT COUNTER =====
+        let currentSeats = 7;
+        const targetSeats = 3;
+        let seatInterval;
+
+        function updateSeatCounter() {
+            if (currentSeats > targetSeats) {
+                currentSeats--;
+                const d1 = document.getElementById('digit1');
+                const d2 = document.getElementById('digit2');
+                const bd1 = document.getElementById('bigDigit1');
+                const bd2 = document.getElementById('bigDigit2');
+                const s = String(currentSeats).padStart(2, '0');
+
+                if (d1) { d1.textContent = s[0]; d1.classList.add('flip'); setTimeout(() => d1.classList.remove('flip'), 300); }
+                if (d2) { d2.textContent = s[1]; d2.classList.add('flip'); setTimeout(() => d2.classList.remove('flip'), 300); }
+                if (bd1) { bd1.textContent = s[0]; bd1.classList.add('flip'); setTimeout(() => bd1.classList.remove('flip'), 300); }
+                if (bd2) { bd2.textContent = s[1]; bd2.classList.add('flip'); setTimeout(() => bd2.classList.remove('flip'), 300); }
+
+                const nextDelay = 8000 + Math.random() * 12000;
+                seatInterval = setTimeout(updateSeatCounter, nextDelay);
+            }
+        }
+        setTimeout(updateSeatCounter, 5000);
+
+        // ===== 7. PARALLAX SCROLL =====
+        const parallaxFast = document.querySelectorAll('.parallax-fast');
+        const parallaxSlow = document.querySelectorAll('.parallax-slow');
+
+        window.addEventListener('scroll', function() {
+            const scrollY = window.scrollY;
+            parallaxFast.forEach(el => {
+                el.style.transform = `translateY(${scrollY * 0.15}px)`;
+            });
+            parallaxSlow.forEach(el => {
+                el.style.transform = `translateY(${scrollY * 0.05}px)`;
+            });
+        });
+
+        // ===== 8. MAGNETIC BUTTONS =====
+        const magneticBtns = document.querySelectorAll('[data-magnetic]');
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', function(e) {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            btn.addEventListener('mouseleave', function() {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // ===== 9. SMOOTH PAGE TRANSITIONS =====
+        const pageTransition = document.getElementById('pageTransition');
+        document.querySelectorAll('a[href]').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && !href.startsWith('#') && !href.startsWith('http')) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (pageTransition) pageTransition.classList.add('active');
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 600);
+                });
+            }
+        });
+
+        // ===== 10. AUDIO VISUALIZER =====
+        const vizCanvas = document.getElementById('audioVizCanvas');
+        if (vizCanvas) {
+            const vCtx = vizCanvas.getContext('2d');
+            const barCount = 64;
+            let bars = [];
+
+            function resizeViz() {
+                vizCanvas.width = vizCanvas.offsetWidth;
+                vizCanvas.height = vizCanvas.offsetHeight;
+            }
+            resizeViz();
+            window.addEventListener('resize', resizeViz);
+
+            for (let i = 0; i < barCount; i++) {
+                bars.push({ height: 0, target: 0, speed: 0.05 + Math.random() * 0.1 });
+            }
+
+            let vizTime = 0;
+            function animateViz() {
+                vCtx.clearRect(0, 0, vizCanvas.width, vizCanvas.height);
+                const barWidth = vizCanvas.width / barCount;
+                vizTime += 0.02;
+
+                bars.forEach((bar, i) => {
+                    bar.target = Math.abs(Math.sin(vizTime + i * 0.2)) * vizCanvas.height * 0.8;
+                    bar.height += (bar.target - bar.height) * bar.speed;
+
+                    const x = i * barWidth;
+                    const y = vizCanvas.height - bar.height;
+                    const gradient = vCtx.createLinearGradient(0, vizCanvas.height, 0, y);
+                    gradient.addColorStop(0, 'rgba(212, 166, 58, 0.8)');
+                    gradient.addColorStop(1, 'rgba(37, 99, 235, 0.4)');
+
+                    vCtx.fillStyle = gradient;
+                    vCtx.fillRect(x + 2, y, barWidth - 4, bar.height);
+                });
+                requestAnimationFrame(animateViz);
+            }
+
+            // Only animate when visible
+            const vizObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateViz();
+                        vizObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            vizObserver.observe(document.getElementById('audioViz'));
+        }
+
+        // ===== 11. HORIZONTAL SCROLL SECTION =====
+        const horizontalSection = document.getElementById('horizontalSection');
+        const horizontalTrack = document.getElementById('horizontalTrack');
+        if (horizontalSection && horizontalTrack) {
+            window.addEventListener('scroll', function() {
+                const rect = horizontalSection.getBoundingClientRect();
+                const sectionTop = rect.top;
+                const sectionHeight = horizontalSection.offsetHeight;
+                const viewportHeight = window.innerHeight;
+
+                if (sectionTop < 0 && sectionTop > -sectionHeight + viewportHeight) {
+                    const progress = Math.abs(sectionTop) / (sectionHeight - viewportHeight);
+                    const maxScroll = horizontalTrack.scrollWidth - window.innerWidth;
+                    horizontalTrack.style.transform = `translateX(-${progress * maxScroll}px)`;
+                }
+            });
+        }
+
+        // ===== 12. PARTICLE BURST ON CLICK =====
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) return;
+            const burstCount = 12;
+            const colors = ['#D4A63A', '#2563EB', '#F0D78C', '#94A3B8'];
+
+            for (let i = 0; i < burstCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    pointer-events: none;
+                    z-index: 99997;
+                    left: ${e.clientX}px;
+                    top: ${e.clientY}px;
+                `;
+                document.body.appendChild(particle);
+
+                const angle = (Math.PI * 2 * i) / burstCount;
+                const velocity = 50 + Math.random() * 100;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+
+                let px = e.clientX;
+                let py = e.clientY;
+                let opacity = 1;
+
+                function animateBurst() {
+                    px += vx * 0.02;
+                    py += vy * 0.02;
+                    opacity -= 0.02;
+                    particle.style.left = px + 'px';
+                    particle.style.top = py + 'px';
+                    particle.style.opacity = opacity;
+
+                    if (opacity > 0) {
+                        requestAnimationFrame(animateBurst);
+                    } else {
+                        particle.remove();
+                    }
+                }
+                animateBurst();
+            }
+        });
+
+        // ===== 13. INTERACTIVE DIAGRAM =====
+        const journeyNodes = document.querySelectorAll('.diagram-node');
+        journeyNodes.forEach((node, index) => {
+            node.addEventListener('click', function() {
+                journeyNodes.forEach(n => n.style.opacity = '0.4');
+                node.style.opacity = '1';
+                node.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    journeyNodes.forEach(n => {
+                        n.style.opacity = '1';
+                        n.style.transform = 'scale(1)';
+                    });
+                }, 1500);
+            });
+        });
+
+        // ===== 14. NAV SCROLL EFFECT =====
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav');
+            if (window.scrollY > 50) { nav.classList.add('scrolled'); } else { nav.classList.remove('scrolled'); }
+        });
+
+        // ===== 15. REVEAL ON SCROLL =====
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); } });
+        }, { threshold: 0.1 });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ===== 16. TRACKER INIT =====
+        const container = document.getElementById('trackerDays');
+        const fill = document.getElementById('trackerFill');
+        if (container && fill) {
+            for (let i = 1; i <= 30; i++) {
+                const day = document.createElement('div');
+                day.className = 'tracker-day' + (i <= 15 ? ' completed' : '');
+                day.textContent = i;
+                day.title = 'Day ' + i;
+                container.appendChild(day);
+            }
+            setTimeout(() => { fill.style.width = '50%'; }, 500);
+        }
+
+        // ===== 17. COUNTER ANIMATION =====
+        const counterSection = document.querySelector('.counter-section');
+        if (counterSection) {
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = document.getElementById('bigCounter');
+                        if (counter) {
+                            let current = 20;
+                            const target = 7;
+                            const interval = setInterval(() => {
+                                current--;
+                                counter.innerHTML = String(current).padStart(2, '0') + '<span style="font-size:0.5em; color: var(--text-muted);">/20</span>';
+                                if (current <= target) { clearInterval(interval); }
+                            }, 150);
+                        }
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            counterObserver.observe(counterSection);
+        }
+    })();
+
+    // ===== GLOBAL FUNCTIONS =====
+    function toggleFaq(element) {
+        const item = element.parentElement;
+        const isActive = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(faq => faq.classList.remove('active'));
+        if (!isActive) { item.classList.add('active'); }
+    }
+
+    function toggleMobileMenu() {
+        const links = document.querySelector('.nav-links');
+        if (links.style.display === 'flex' && links.style.position === 'absolute') {
+            links.style.display = 'none';
+        } else {
+            links.style.display = 'flex';
+            links.style.position = 'absolute';
+            links.style.top = '100%';
+            links.style.left = '0';
+            links.style.right = '0';
+            links.style.flexDirection = 'column';
+            links.style.background = 'rgba(11,15,23,0.95)';
+            links.style.padding = '20px';
+            links.style.backdropFilter = 'blur(20px)';
+            links.style.borderBottom = '1px solid var(--border-subtle)';
+            links.style.gap = '16px';
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum — #TheTwenty</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0B0F17;
+            --bg-secondary: #111827;
+            --bg-card: #151D2E;
+            --bg-card-hover: #1A2438;
+            --border-subtle: rgba(255,255,255,0.06);
+            --border-accent: rgba(212,166,58,0.3);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-gold: #D4A63A;
+            --accent-gold-dim: rgba(212,166,58,0.15);
+            --accent-blue: #2563EB;
+            --accent-blue-dim: rgba(37,99,235,0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); overflow-x: hidden; line-height: 1.6; cursor: none; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+
+        .loading-screen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
+        .loading-screen.hidden { opacity: 0; pointer-events: none; }
+        .loading-logo { margin-bottom: 30px; }
+        .loading-logo img { height: 48px; width: auto; display: block; }
+        .loading-bar { width: 200px; height: 2px; background: var(--border-subtle); border-radius: 2px; overflow: hidden; }
+        .loading-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); border-radius: 2px; animation: loadingProgress 2s ease-out forwards; }
+        .loading-text { margin-top: 16px; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; }
+
+        .cursor-dot { position: fixed; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-gold); pointer-events: none; z-index: 99999; mix-blend-mode: difference; transition: transform 0.15s ease-out; transform: translate(-50%, -50%); }
+        .cursor-ring { position: fixed; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(212,166,58,0.4); pointer-events: none; z-index: 99998; transition: all 0.2s ease-out; transform: translate(-50%, -50%); }
+        .cursor-ring.hovering { width: 60px; height: 60px; border-width: 3px; border-color: var(--accent-gold); }
+
+        #webgl-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+        .magnetic-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
+        .gradient-text { background: linear-gradient(135deg, var(--accent-gold), #F0D78C, var(--accent-blue), var(--accent-gold)); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradientShift 4s ease infinite; }
+
+        .page-transition { position: fixed; inset: 0; background: var(--bg-primary); z-index: 9999; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1); }
+        .page-transition.active { transform: translateY(-100%); }
+
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(11, 15, 23, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); transition: all 0.3s ease; }
+        .nav.scrolled { padding: 14px 40px; background: rgba(11, 15, 23, 0.95); }
+        .nav-logo { display: flex; align-items: center; text-decoration: none; }
+        .nav-logo img { height: 36px; width: auto; display: block; }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent-gold); transition: width 0.3s; }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-cta { background: var(--accent-gold); color: var(--bg-primary); padding: 10px 24px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; transition: all 0.2s; border: none; cursor: none; }
+        .nav-cta:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(212,166,58,0.3); }
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: none; }
+
+        .hero { min-height: 60vh; display: flex; align-items: center; justify-content: center; position: relative; padding: 120px 40px 60px; overflow: hidden; }
+        .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(37,99,235,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(212,166,58,0.06) 0%, transparent 50%); }
+        .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%); }
+        .hero-content { max-width: 900px; width: 100%; position: relative; z-index: 2; text-align: center; }
+        .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-gold-dim); border: 1px solid var(--border-accent); color: var(--accent-gold); padding: 8px 16px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+        .hero-headline { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 5vw, 5rem); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px; }
+        .hero-subheadline { color: var(--text-secondary); font-size: 1.15rem; line-height: 1.7; margin-bottom: 40px; max-width: 640px; margin-left: auto; margin-right: auto; }
+        .btn-primary { background: var(--accent-gold); color: var(--bg-primary); padding: 16px 32px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; cursor: none; font-family: 'Inter', sans-serif; }
+        .btn-primary:hover { transform: scale(1.03); box-shadow: 0 0 40px rgba(212,166,58,0.3); }
+        .btn-secondary { background: transparent; color: var(--text-primary); padding: 16px 32px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-subtle); transition: all 0.2s; cursor: none; font-family: 'Inter', sans-serif; }
+        .btn-secondary:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+        .section { padding: 120px 40px; position: relative; }
+        .section-header { max-width: 800px; margin: 0 auto 80px; text-align: center; }
+        .section-eyebrow { color: var(--accent-gold); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; }
+        .section-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
+        .section-subtitle { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; }
+
+        /* Course Selector Tabs */
+        .course-tabs { max-width: 900px; margin: 0 auto 60px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .course-tab { padding: 12px 24px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 100px; color: var(--text-secondary); font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: none; transition: all 0.3s ease; }
+        .course-tab:hover { border-color: var(--border-accent); color: var(--text-primary); }
+        .course-tab.active { background: var(--accent-gold); border-color: var(--accent-gold); color: var(--bg-primary); }
+
+        /* Course Content */
+        .course-panel { display: none; max-width: 1100px; margin: 0 auto; }
+        .course-panel.active { display: block; animation: fadeInUp 0.5s ease; }
+        .course-hero { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 48px; margin-bottom: 40px; position: relative; overflow: hidden; }
+        .course-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); }
+        .course-hero h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.8rem; margin-bottom: 12px; }
+        .course-hero p { color: var(--text-secondary); font-size: 1rem; line-height: 1.7; max-width: 700px; }
+        .course-meta { display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
+        .course-meta-item { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem; }
+        .course-meta-item svg { color: var(--accent-gold); width: 16px; height: 16px; }
+
+        /* SHIELD Mapping Grid */
+        .shield-map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .shield-map-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 28px; transition: all 0.3s ease; }
+        .shield-map-card:hover { border-color: var(--border-accent); transform: translateY(-4px); }
+        .shield-map-letter { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 2.5rem; color: var(--accent-gold); line-height: 1; margin-bottom: 8px; }
+        .shield-map-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; }
+        .shield-map-desc { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+        .shield-map-deliverable { background: var(--bg-card); border-radius: 8px; padding: 10px 14px; margin-top: 12px; font-size: 0.8rem; color: var(--text-muted); }
+        .shield-map-deliverable strong { color: var(--accent-gold); }
+
+        /* How SHIELD Works Section */
+        .how-shield { background: var(--bg-secondary); }
+        .shield-diagram { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; position: relative; }
+        .shield-step { display: flex; align-items: center; gap: 24px; padding: 28px 0; position: relative; }
+        .shield-step:not(:last-child)::after { content: ''; position: absolute; left: 28px; top: 64px; width: 2px; height: calc(100% - 20px); background: linear-gradient(to bottom, var(--accent-gold), transparent); }
+        .shield-step-icon { width: 56px; height: 56px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--accent-gold); flex-shrink: 0; z-index: 2; transition: all 0.3s; }
+        .shield-step:hover .shield-step-icon { background: var(--accent-gold-dim); border-color: var(--accent-gold); transform: scale(1.1); }
+        .shield-step-content h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+        .shield-step-content p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+
+        /* Footer */
+        .footer { background: var(--bg-secondary); border-top: 1px solid var(--border-subtle); padding: 60px 40px 30px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; }
+        .footer-brand img { height: 28px; width: auto; display: block; margin-bottom: 16px; }
+        .footer-desc { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px; }
+        .footer-social { display: flex; gap: 12px; }
+        .footer-social a { width: 40px; height: 40px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); text-decoration: none; transition: all 0.2s; cursor: none; }
+        .footer-social a:hover { border-color: var(--accent-gold); color: var(--accent-gold); transform: translateY(-2px); }
+        .footer-col h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 20px; color: var(--text-primary); }
+        .footer-col a { display: block; color: var(--text-secondary); text-decoration: none; padding: 6px 0; font-size: 0.9rem; transition: color 0.2s; cursor: none; }
+        .footer-col a:hover { color: var(--accent-gold); }
+        .footer-bottom { max-width: 1200px; margin: 40px auto 0; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 0.8rem; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes loadingProgress { 0% { width: 0; } 100% { width: 100%; } }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 1024px) {
+            .cursor-dot, .cursor-ring { display: none; }
+            body { cursor: auto; }
+            .nav-cta, .btn-primary, .btn-secondary, .course-tab, .footer-social a, .footer-col a { cursor: pointer; }
+            .shield-map { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .section { padding: 80px 20px; }
+            .hero { padding: 100px 20px 60px; }
+            .shield-map { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr 1fr; gap: 40px; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .footer-content { grid-template-columns: 1fr; }
+            .course-tabs { flex-direction: column; align-items: center; }
+            .course-tab { width: 100%; max-width: 280px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo"><img src="TheTwenty Logo.png" alt="#TheTwenty"></div>
+        <div class="loading-bar"><div class="loading-fill"></div></div>
+        <div class="loading-text">Loading Curriculum</div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Page Transition Overlay -->
+    <div class="page-transition" id="pageTransition"></div>
+
+    <!-- WebGL Particle Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <a href="index.html" class="nav-logo magnetic-btn"><img src="TheTwenty Logo.png" alt="#TheTwenty"></a>
+        <div class="nav-links">
+            <a href="kingdom-vision.html" class="magnetic-btn">Vision</a>
+            <a href="curriculum.html" class="magnetic-btn">Curriculum</a>
+            <a href="theshield.html" class="magnetic-btn">TheShield</a>
+            <a href="careers.html" class="magnetic-btn">Careers</a>
+            <a href="faq.html" class="magnetic-btn">FAQ</a>
+            <a href="apply-now.html" class="nav-cta magnetic-btn">Apply Now</a>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">&#9776;</button>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <div class="hero-eyebrow">Five Tracks. One Framework.</div>
+            <h1 class="hero-headline">
+                The <span class="gradient-text">Curriculum</span>
+            </h1>
+            <p class="hero-subheadline">Every course at #TheTwenty is delivered through the SHIELD Framework. Same structure. Same transformation. Different skill. Pick your track and build your future.</p>
+            <a href="theshield.html" class="btn-secondary magnetic-btn" data-magnetic>
+                What Is SHIELD?
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Course Selector -->
+    <section class="section" style="padding-top:60px;">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">Choose Your Track</div>
+            <h2 class="section-title">Five Courses.<br><span class="gradient-text">One Framework.</span></h2>
+        </div>
+
+        <div class="course-tabs reveal">
+            <button class="course-tab active" onclick="showCourse(0)">Vibe Coding</button>
+            <button class="course-tab" onclick="showCourse(1)">Ebook Publishing</button>
+            <button class="course-tab" onclick="showCourse(2)">Content Creation</button>
+            <button class="course-tab" onclick="showCourse(3)">Kingdom Business</button>
+            <button class="course-tab" onclick="showCourse(4)">App Development</button>
+        </div>
+
+        <!-- Course 1: Vibe Coding -->
+        <div class="course-panel active" data-course="0">
+            <div class="course-hero">
+                <h3>Course 1: AI-Powered Vibe Coding</h3>
+                <p>Master AI-assisted web development. Build websites, landing pages, and business tools without traditional coding bottlenecks. Learn to prompt high-converting solutions in minutes using AI sandboxes.</p>
+                <div class="course-meta">
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        60 Days
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        20 Students
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        5 Deliverables
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        $2,000+ Target
+                    </div>
+                </div>
+            </div>
+            <div class="shield-map">
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">S</div>
+                    <div class="shield-map-title">Skill</div>
+                    <div class="shield-map-desc">AI-assisted web dev, vibe coding, prompt engineering for business solutions</div>
+                    <div class="shield-map-deliverable"><strong>Deliverable:</strong> Live Build + Swipe File</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">H</div>
+                    <div class="shield-map-title">Human Proof</div>
+                    <div class="shield-map-desc">Position as AI Solutions Architect with optimized LinkedIn, resume, and portfolio site</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Day Setup</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">I</div>
+                    <div class="shield-map-title">Income</div>
+                    <div class="shield-map-desc">Low-friction proposals, working prototype pitching, first 4 clients at $500 each</div>
+                    <div class="shield-map-deliverable"><strong>Target:</strong> $2,000 immediate income</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">E</div>
+                    <div class="shield-map-title">Evidence</div>
+                    <div class="shield-map-desc">30 days of build documentation, process breakdowns, and results on LinkedIn</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 30-Day Content</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">L</div>
+                    <div class="shield-map-title">Leverage</div>
+                    <div class="shield-map-desc">AI-driven job search, CV auto-tailoring, 5 targeted applications daily</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Job-A-Day</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">D</div>
+                    <div class="shield-map-title">Digital Asset</div>
+                    <div class="shield-map-desc">Personal landing page, email list, digital product marketplace, 60-day prayer anchor</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 60-Day Prayer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course 2: Ebook Publishing -->
+        <div class="course-panel" data-course="1">
+            <div class="course-hero">
+                <h3>Course 2: Write & Sell Ebooks on Amazon</h3>
+                <p>Master the complete ebook publishing pipeline. Write, format, publish, and market books on Amazon KDP using AI assistance. Build a passive income stream and author brand from scratch.</p>
+                <div class="course-meta">
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        60 Days
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        20 Students
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        5 Deliverables
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        $1,500+ Target
+                    </div>
+                </div>
+            </div>
+            <div class="shield-map">
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">S</div>
+                    <div class="shield-map-title">Skill</div>
+                    <div class="shield-map-desc">AI-assisted writing, book formatting, KDP publishing, cover design with AI tools</div>
+                    <div class="shield-map-deliverable"><strong>Deliverable:</strong> Published Ebook + Template Library</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">H</div>
+                    <div class="shield-map-title">Human Proof</div>
+                    <div class="shield-map-desc">Author brand, Amazon author page, Goodreads presence, reviewer network</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Day Author Setup</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">I</div>
+                    <div class="shield-map-title">Income</div>
+                    <div class="shield-map-desc">First 3 ebooks live, initial sales, pricing strategy, royalty optimization</div>
+                    <div class="shield-map-deliverable"><strong>Target:</strong> $1,500+ in book sales</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">E</div>
+                    <div class="shield-map-title">Evidence</div>
+                    <div class="shield-map-desc">30 days of writing process content, launch documentation, sales screenshots</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 30-Day Content</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">L</div>
+                    <div class="shield-map-title">Leverage</div>
+                    <div class="shield-map-desc">5 niche research + keyword optimization actions daily, AMS ad campaigns</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Actions-A-Day</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">D</div>
+                    <div class="shield-map-title">Digital Asset</div>
+                    <div class="shield-map-desc">Author website, email list, backlist funnel, series bible, 60-day prayer anchor</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 60-Day Prayer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course 3: Content Creation -->
+        <div class="course-panel" data-course="2">
+            <div class="course-hero">
+                <h3>Course 3: AI-Powered Content Creation</h3>
+                <p>Build a content empire using AI. Generate video scripts, thumbnails, shorts, and long-form content at scale. Monetize through brand deals, ad revenue, and digital product sales.</p>
+                <div class="course-meta">
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        60 Days
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        20 Students
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        5 Deliverables
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        $2,000+ Target
+                    </div>
+                </div>
+            </div>
+            <div class="shield-map">
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">S</div>
+                    <div class="shield-map-title">Skill</div>
+                    <div class="shield-map-desc">AI script generation, thumbnail creation, video editing, platform optimization</div>
+                    <div class="shield-map-deliverable"><strong>Deliverable:</strong> Content System + Template Bank</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">H</div>
+                    <div class="shield-map-title">Human Proof</div>
+                    <div class="shield-map-desc">"AI Content Strategist" brand, cross-platform presence, media kit</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Day Channel Setup</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">I</div>
+                    <div class="shield-map-title">Income</div>
+                    <div class="shield-map-desc">First brand deal or monetized channel, affiliate revenue, product sales</div>
+                    <div class="shield-map-deliverable"><strong>Target:</strong> First paid partnership</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">E</div>
+                    <div class="shield-map-title">Evidence</div>
+                    <div class="shield-map-desc">30 days of published content showing process, growth metrics, engagement</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 30-Day Publishing</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">L</div>
+                    <div class="shield-map-title">Leverage</div>
+                    <div class="shield-map-desc">5 outreach messages to brands/collaborators daily, pitch deck refinement</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Outreach-A-Day</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">D</div>
+                    <div class="shield-map-title">Digital Asset</div>
+                    <div class="shield-map-desc">Channel + newsletter + digital template shop + community, 60-day prayer anchor</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 60-Day Prayer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course 4: Kingdom Business -->
+        <div class="course-panel" data-course="3">
+            <div class="course-hero">
+                <h3>Course 4: Kingdom Business Fundamentals</h3>
+                <p>Build a mission-driven business from the ground up. Learn business model design, financial literacy, operations, and stewardship — all anchored in Kingdom principles and purpose.</p>
+                <div class="course-meta">
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        60 Days
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        20 Students
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        5 Deliverables
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        First Customer
+                    </div>
+                </div>
+            </div>
+            <div class="shield-map">
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">S</div>
+                    <div class="shield-map-title">Skill</div>
+                    <div class="shield-map-desc">Business model design, financial literacy, operations, stewardship principles</div>
+                    <div class="shield-map-deliverable"><strong>Deliverable:</strong> Business Plan + Financial Model</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">H</div>
+                    <div class="shield-map-title">Human Proof</div>
+                    <div class="shield-map-desc">Founder identity, mission statement, community presence, testimony</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Day Brand Launch</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">I</div>
+                    <div class="shield-map-title">Income</div>
+                    <div class="shield-map-desc">First paying customer or donation-based revenue, pricing with purpose</div>
+                    <div class="shield-map-deliverable"><strong>Target:</strong> First revenue before Day 15</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">E</div>
+                    <div class="shield-map-title">Evidence</div>
+                    <div class="shield-map-desc">30 days of mission-driven content, impact stories, customer testimonials</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 30-Day Impact Journal</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">L</div>
+                    <div class="shield-map-title">Leverage</div>
+                    <div class="shield-map-desc">5 investor/partner/donor conversations daily, pitch refinement, networking</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Conversations-A-Day</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">D</div>
+                    <div class="shield-map-title">Digital Asset</div>
+                    <div class="shield-map-desc">Organization website, donor list, recurring giving funnel, 60-day prayer anchor</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 60-Day Prayer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course 5: App Development -->
+        <div class="course-panel" data-course="4">
+            <div class="course-hero">
+                <h3>Course 5: AI-Powered App Development</h3>
+                <p>Build real mobile and web applications using AI-assisted development. From idea to App Store submission, learn to vibe-code apps that solve real problems and generate real revenue.</p>
+                <div class="course-meta">
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        60 Days
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        20 Students
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        5 Deliverables
+                    </div>
+                    <div class="course-meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        $3,000+ Target
+                    </div>
+                </div>
+            </div>
+            <div class="shield-map">
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">S</div>
+                    <div class="shield-map-title">Skill</div>
+                    <div class="shield-map-desc">Vibe-code mobile & web apps, Flutter, React Native, Swift via AI sandboxes</div>
+                    <div class="shield-map-deliverable"><strong>Deliverable:</strong> Shipped App + Component Library</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">H</div>
+                    <div class="shield-map-title">Human Proof</div>
+                    <div class="shield-map-desc">"App Developer" portfolio, GitHub, Product Hunt presence, case studies</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Day Dev Setup</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">I</div>
+                    <div class="shield-map-title">Income</div>
+                    <div class="shield-map-desc">2-3 MVPs for clients at $1,500-$3,000 each, or launch paid app</div>
+                    <div class="shield-map-deliverable"><strong>Target:</strong> $3,000+ in dev revenue</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">E</div>
+                    <div class="shield-map-title">Evidence</div>
+                    <div class="shield-map-desc">30 days of build logs, feature breakdowns, launch posts on LinkedIn + Twitter/X</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 30-Day Build Log</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">L</div>
+                    <div class="shield-map-title">Leverage</div>
+                    <div class="shield-map-desc">5 app ideas pitched to accelerators, investors, or App Store feature requests daily</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 5-Pitches-A-Day</div>
+                </div>
+                <div class="shield-map-card">
+                    <div class="shield-map-letter">D</div>
+                    <div class="shield-map-title">Digital Asset</div>
+                    <div class="shield-map-desc">Dev studio site, waitlist, newsletter, template/component marketplace, 60-day prayer</div>
+                    <div class="shield-map-deliverable"><strong>Challenge:</strong> 60-Day Prayer</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How SHIELD Works -->
+    <section class="section how-shield">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">The Engine</div>
+            <h2 class="section-title">How SHIELD<br><span class="gradient-text">Delivers Results.</span></h2>
+        </div>
+        <div class="shield-diagram reveal">
+            <div class="shield-step">
+                <div class="shield-step-icon">S</div>
+                <div class="shield-step-content">
+                    <h4>Learn the Skill</h4>
+                    <p>Every course starts with hands-on skill acquisition. Not theory. Build live, in real-time, with AI assistance.</p>
+                </div>
+            </div>
+            <div class="shield-step">
+                <div class="shield-step-icon">H</div>
+                <div class="shield-step-content">
+                    <h4>Prove You're Legit</h4>
+                    <p>Position yourself as an authority. Optimize profiles. Build a portfolio. Look like the professional you are becoming.</p>
+                </div>
+            </div>
+            <div class="shield-step">
+                <div class="shield-step-icon">I</div>
+                <div class="shield-step-content">
+                    <h4>Make Money Fast</h4>
+                    <p>Land your first paying clients or sales within the first two weeks. Financial confidence fuels everything else.</p>
+                </div>
+            </div>
+            <div class="shield-step">
+                <div class="shield-step-icon">E</div>
+                <div class="shield-step-content">
+                    <h4>Create Public Proof</h4>
+                    <p>Document everything. 30 days of content creates an undeniable archive of your capability that attracts inbound opportunities.</p>
+                </div>
+            </div>
+            <div class="shield-step">
+                <div class="shield-step-icon">L</div>
+                <div class="shield-step-content">
+                    <h4>Scale the Opportunity</h4>
+                    <p>Systematize outreach. 5 targeted actions daily for 30 days compounds into massive opportunity exposure.</p>
+                </div>
+            </div>
+            <div class="shield-step">
+                <div class="shield-step-icon">D</div>
+                <div class="shield-step-content">
+                    <h4>Own Your Platform</h4>
+                    <p>Build assets that work while you sleep. Email lists. Digital products. Automated funnels. Anchored in 60 days of prayer.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section" style="padding: 120px 40px; background: var(--bg-primary); position: relative; overflow: hidden;">
+        <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(37,99,235,0.06) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(212,166,58,0.06) 0%, transparent 50%);"></div>
+        <div style="max-width: 700px; margin: 0 auto; text-align: center; position: relative; z-index: 2;" class="reveal">
+            <h2 style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px;">Pick Your Track.<br><span class="gradient-text">Start Building.</span></h2>
+            <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; margin-bottom: 40px;">All five courses use the same SHIELD Framework. Same transformation. Different skill. Which one is yours?</p>
+            <a href="apply-now.html" class="btn-primary magnetic-btn" data-magnetic style="font-size: 1.1rem; padding: 18px 40px;">
+                Apply For #TheTwenty
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand"><img src="TheTwenty Logo.png" alt="#TheTwenty"></div>
+                <p class="footer-desc">Building people before buildings. A movement of 20 young professionals being equipped for the future while advancing God is work.</p>
+                <div class="footer-social">
+                    <a href="#" title="WhatsApp">&#128172;</a>
+                    <a href="#" title="LinkedIn">&#128279;</a>
+                    <a href="#" title="Instagram">&#128247;</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Program</h4>
+                <a href="kingdom-vision.html">Vision</a>
+                <a href="curriculum.html">Curriculum</a>
+                <a href="theshield.html">TheShield</a>
+                <a href="careers.html">Careers</a>
+                <a href="faq.html">FAQ</a>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <a href="#">Preparation Guide</a>
+                <a href="faq.html">FAQ</a>
+                <a href="#">Success Stories</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <a href="#">WhatsApp Community</a>
+                <a href="#">Email Us</a>
+                <a href="#">Church Office</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>2026 #TheTwenty. All rights reserved.</span>
+            <span>Built with purpose. Powered by faith.</span>
+        </div>
+    </footer>
+
+    <script>
+    (function() {
+        // Loading Screen
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 2200);
+        });
+
+        // Custom Cursor
+        const cursorDot = document.getElementById('cursorDot');
+        const cursorRing = document.getElementById('cursorRing');
+        let mouseX = 0, mouseY = 0;
+        let dotX = 0, dotY = 0;
+        let ringX = 0, ringY = 0;
+
+        if (window.innerWidth > 768 && cursorDot && cursorRing) {
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            function animateCursor() {
+                dotX += (mouseX - dotX) * 0.2;
+                dotY += (mouseY - dotY) * 0.2;
+                ringX += (mouseX - ringX) * 0.1;
+                ringY += (mouseY - ringY) * 0.1;
+                cursorDot.style.left = dotX + 'px';
+                cursorDot.style.top = dotY + 'px';
+                cursorRing.style.left = ringX + 'px';
+                cursorRing.style.top = ringY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+            const hoverElements = document.querySelectorAll('a, button, .course-tab, input, select, textarea');
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursorRing.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => cursorRing.classList.remove('hovering'));
+            });
+        }
+
+        // WebGL Particle Background
+        const canvas = document.getElementById('webgl-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const particleCount = 80;
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.speedY = (Math.random() - 0.5) * 0.3;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                    this.hue = Math.random() > 0.5 ? 45 : 220;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${this.hue}, 70%, 60%, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+            for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+            function drawConnections() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(212, 166, 58, ${0.1 * (1 - dist / 150)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                drawConnections();
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        }
+
+        // Nav Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav');
+            if (window.scrollY > 50) { nav.classList.add('scrolled'); } else { nav.classList.remove('scrolled'); }
+        });
+
+        // Magnetic Buttons
+        const magneticBtns = document.querySelectorAll('[data-magnetic]');
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', function(e) {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            btn.addEventListener('mouseleave', function() {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // Page Transitions
+        const pageTransition = document.getElementById('pageTransition');
+        document.querySelectorAll('a[href]').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && !href.startsWith('#') && !href.startsWith('http')) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (pageTransition) pageTransition.classList.add('active');
+                    setTimeout(() => { window.location.href = href; }, 600);
+                });
+            }
+        });
+
+        // Particle Burst on Click
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) return;
+            if (e.target.closest('a, button, input, textarea, select, .course-tab')) return;
+            const burstCount = 12;
+            const colors = ['#D4A63A', '#2563EB', '#F0D78C', '#94A3B8'];
+            for (let i = 0; i < burstCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `position: fixed; width: 6px; height: 6px; border-radius: 50%; background: ${colors[Math.floor(Math.random() * colors.length)]}; pointer-events: none; z-index: 99997; left: ${e.clientX}px; top: ${e.clientY}px;`;
+                document.body.appendChild(particle);
+                const angle = (Math.PI * 2 * i) / burstCount;
+                const velocity = 50 + Math.random() * 100;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+                let px = e.clientX, py = e.clientY, opacity = 1;
+                function animateBurst() {
+                    px += vx * 0.02;
+                    py += vy * 0.02;
+                    opacity -= 0.02;
+                    particle.style.left = px + 'px';
+                    particle.style.top = py + 'px';
+                    particle.style.opacity = opacity;
+                    if (opacity > 0) requestAnimationFrame(animateBurst);
+                    else particle.remove();
+                }
+                animateBurst();
+            }
+        });
+
+        // Reveal on Scroll
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); } });
+        }, { threshold: 0.1 });
+        revealElements.forEach(el => revealObserver.observe(el));
+    })();
+
+    // Course Tab Switcher
+    function showCourse(index) {
+        document.querySelectorAll('.course-tab').forEach((tab, i) => {
+            tab.classList.toggle('active', i === index);
+        });
+        document.querySelectorAll('.course-panel').forEach((panel, i) => {
+            panel.classList.toggle('active', i === index);
+        });
+    }
+
+    function toggleMobileMenu() {
+        const links = document.querySelector('.nav-links');
+        if (links.style.display === 'flex' && links.style.position === 'absolute') {
+            links.style.display = 'none';
+        } else {
+            links.style.display = 'flex';
+            links.style.position = 'absolute';
+            links.style.top = '100%';
+            links.style.left = '0';
+            links.style.right = '0';
+            links.style.flexDirection = 'column';
+            links.style.background = 'rgba(11,15,23,0.95)';
+            links.style.padding = '20px';
+            links.style.backdropFilter = 'blur(20px)';
+            links.style.borderBottom = '1px solid var(--border-subtle)';
+            links.style.gap = '16px';
+        }
+    }
+    </script>
+</body>
+</html>
