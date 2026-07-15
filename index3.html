@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#TheTwenty — SHIELD Masterclass 2026</title>
+    <title>#TheTwenty — Founding Cohort 2026</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -31,31 +31,62 @@
         ::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
 
-        .cursor-dot { position: fixed; top: 0; left: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-gold); pointer-events: none; z-index: 99999; mix-blend-mode: difference; transition: transform 0.15s ease-out; transform: translate(-50%, -50%); }
-        .cursor-ring { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(212,166,58,0.4); pointer-events: none; z-index: 99998; transition: all 0.2s ease-out; transform: translate(-50%, -50%); }
+        /* Custom Cursor */
+        .cursor-dot { position: fixed; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-gold); pointer-events: none; z-index: 99999; mix-blend-mode: difference; transition: transform 0.15s ease-out; transform: translate(-50%, -50%); }
+        .cursor-ring { position: fixed; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(212,166,58,0.4); pointer-events: none; z-index: 99998; transition: all 0.2s ease-out; transform: translate(-50%, -50%); }
         .cursor-ring.hovering { width: 60px; height: 60px; border-width: 3px; border-color: var(--accent-gold); }
 
+        /* Loading Screen */
         .loading-screen { position: fixed; inset: 0; background: var(--bg-primary); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
         .loading-screen.hidden { opacity: 0; pointer-events: none; }
+        .loading-logo { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 3rem; margin-bottom: 30px; }
+        .loading-logo span { color: var(--accent-gold); }
         .loading-bar { width: 200px; height: 2px; background: var(--border-subtle); border-radius: 2px; overflow: hidden; }
         .loading-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); border-radius: 2px; animation: loadingProgress 2s ease-out forwards; }
         .loading-text { margin-top: 16px; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; }
 
+        /* WebGL Canvas */
         #webgl-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
+        /* Magnetic Button */
         .magnetic-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
 
+        /* Gradient Text */
         .gradient-text { background: linear-gradient(135deg, var(--accent-gold), #F0D78C, var(--accent-blue), var(--accent-gold)); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradientShift 4s ease infinite; }
 
+        /* Typewriter Cursor */
         .typewriter-cursor { display: inline-block; width: 3px; height: 1em; background: var(--accent-gold); margin-left: 4px; animation: blink 1s step-end infinite; vertical-align: middle; }
 
+        /* 3D Tilt Card */
         .tilt-card { transform-style: preserve-3d; transition: transform 0.1s ease-out; position: relative; }
         .tilt-card-shine { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, transparent 100%); border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 10; }
         .tilt-card:hover .tilt-card-shine { opacity: 1; }
 
+        /* Particle Burst Canvas */
+        .particle-burst { position: fixed; pointer-events: none; z-index: 99997; }
+
+        /* Audio Visualizer Section */
+        .audio-viz-section { padding: 120px 40px; position: relative; background: var(--bg-secondary); overflow: hidden; }
+        .audio-viz-canvas { width: 100%; height: 200px; margin-top: 40px; }
+
+        /* Horizontal Scroll Section */
+        .horizontal-scroll-section { height: 300vh; position: relative; }
+        .horizontal-scroll-container { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; }
+        .horizontal-scroll-track { display: flex; gap: 40px; padding: 0 60px; will-change: transform; }
+        .horizontal-card { flex-shrink: 0; width: 400px; height: 500px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
+        .horizontal-card:hover { border-color: var(--border-accent); transform: scale(1.02); }
+
+        /* Interactive Diagram */
+        .interactive-diagram { position: relative; cursor: pointer; }
+        .diagram-node { transition: all 0.3s; }
+        .diagram-node:hover { transform: scale(1.05); }
+        .diagram-connection { stroke: var(--accent-gold); stroke-dasharray: 8 4; animation: dashFlow 1s linear infinite; }
+
+        /* Page Transition */
         .page-transition { position: fixed; inset: 0; background: var(--bg-primary); z-index: 9999; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1); }
         .page-transition.active { transform: translateY(-100%); }
 
+        /* Seat Counter Digits */
         .seat-counter { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 4rem; color: var(--accent-gold); display: inline-flex; align-items: center; gap: 8px; }
         .digit { display: inline-block; width: 0.7em; text-align: center; transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         .digit.flip { transform: rotateX(360deg); }
@@ -119,49 +150,7 @@
         .section-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
         .section-subtitle { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; }
 
-        .shield-section { background: var(--bg-primary); position: relative; overflow: hidden; }
-        .shield-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(212,166,58,0.04) 0%, transparent 60%); pointer-events: none; }
-        .shield-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .shield-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .shield-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); opacity: 0; transition: opacity 0.3s; }
-        .shield-card:hover { transform: translateY(-6px); border-color: var(--border-accent); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        .shield-card:hover::before { opacity: 1; }
-        .shield-letter { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 3.5rem; color: rgba(212,166,58,0.08); line-height: 1; position: absolute; top: 16px; right: 20px; }
-        .shield-icon { width: 48px; height: 48px; border-radius: 14px; background: var(--accent-gold-dim); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 16px; }
-        .shield-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.15rem; margin-bottom: 8px; }
-        .shield-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
-
-        .curriculum-section { background: var(--bg-secondary); }
-        .course-tabs { max-width: 900px; margin: 0 auto 60px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-        .course-tab { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 100px; padding: 10px 24px; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; cursor: none; transition: all 0.3s; }
-        .course-tab:hover { border-color: var(--border-accent); color: var(--text-primary); }
-        .course-tab.active { background: var(--accent-gold); color: var(--bg-primary); border-color: var(--accent-gold); }
-        .course-content { max-width: 1000px; margin: 0 auto; display: none; }
-        .course-content.active { display: block; animation: fadeInUp 0.5s ease; }
-        .course-hero { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 48px; margin-bottom: 40px; }
-        .course-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
-        .course-meta-item { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 0.85rem; }
-        .course-meta-item strong { color: var(--accent-gold); }
-        .course-hero h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.8rem; margin-bottom: 12px; }
-        .course-hero p { color: var(--text-secondary); line-height: 1.7; }
-        .shield-mapping { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .shield-map-item { background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; }
-        .shield-map-item h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; color: var(--accent-gold); }
-        .shield-map-item p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; }
-
-        .timeline-section { background: var(--bg-primary); position: relative; }
-        .timeline { max-width: 900px; margin: 0 auto; position: relative; }
-        .timeline::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent-gold), var(--accent-blue)); transform: translateX(-50%); }
-        .timeline-step { display: flex; align-items: center; margin-bottom: 60px; position: relative; }
-        .timeline-step:nth-child(even) { flex-direction: row-reverse; }
-        .timeline-step-content { width: 45%; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; transition: all 0.3s; }
-        .timeline-step-content:hover { border-color: var(--border-accent); transform: scale(1.02); }
-        .timeline-step-marker { position: absolute; left: 50%; transform: translateX(-50%); width: 48px; height: 48px; border-radius: 50%; background: var(--bg-card); border: 2px solid var(--accent-gold); display: flex; align-items: center; justify-content: center; font-family: 'Montserrat'; font-weight: 800; color: var(--accent-gold); z-index: 2; }
-        .timeline-step-content h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
-        .timeline-step-content p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
-        .timeline-duration { display: inline-block; background: var(--accent-gold-dim); color: var(--accent-gold); padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; margin-bottom: 12px; }
-
-        .comparison-section { background: var(--bg-secondary); }
+        .transformation { background: var(--bg-primary); }
         .comparison-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .comparison-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; transition: all 0.3s ease; }
         .comparison-card:hover { transform: translateY(-8px); border-color: var(--border-accent); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
@@ -174,6 +163,49 @@
         .comparison-list .icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
         .comparison-list .icon.x { background: rgba(239,68,68,0.15); color: #EF4444; }
         .comparison-list .icon.check { background: var(--accent-gold-dim); color: var(--accent-gold); }
+
+        .big-why { background: var(--bg-secondary); position: relative; overflow: hidden; }
+        .big-why::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(212,166,58,0.05) 0%, transparent 70%); pointer-events: none; }
+        .journey-diagram { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; position: relative; }
+        .journey-step { display: flex; align-items: center; gap: 24px; padding: 24px 0; position: relative; }
+        .journey-step:not(:last-child)::after { content: ''; position: absolute; left: 28px; top: 60px; width: 2px; height: calc(100% - 20px); background: linear-gradient(to bottom, var(--accent-gold), transparent); }
+        .journey-icon { width: 56px; height: 56px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; z-index: 2; transition: all 0.3s; }
+        .journey-step:hover .journey-icon { background: var(--accent-gold-dim); border-color: var(--accent-gold); transform: scale(1.1); }
+        .journey-content h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+        .journey-content p { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .program { background: var(--bg-primary); }
+        .program-cards { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .program-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px 32px; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .program-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); opacity: 0; transition: opacity 0.3s; }
+        .program-card:hover { transform: translateY(-8px); border-color: var(--border-accent); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .program-card:hover::before { opacity: 1; }
+        .program-day { display: inline-block; background: var(--accent-gold-dim); color: var(--accent-gold); padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 20px; }
+        .program-icon { width: 64px; height: 64px; border-radius: 20px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 24px; }
+        .program-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.4rem; margin-bottom: 16px; }
+        .program-card p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; }
+        .program-details { list-style: none; }
+        .program-details li { display: flex; align-items: center; gap: 10px; padding: 8px 0; color: var(--text-secondary); font-size: 0.85rem; }
+        .program-details li::before { content: '->'; color: var(--accent-gold); font-weight: 700; }
+
+        .challenge { background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); position: relative; }
+        .challenge::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(37,99,235,0.08) 0%, transparent 60%); }
+        .metrics-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .metric-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; display: flex; align-items: center; gap: 20px; transition: all 0.3s; }
+        .metric-card:hover { border-color: var(--border-accent); transform: translateX(8px); }
+        .metric-icon { width: 56px; height: 56px; border-radius: 16px; background: var(--accent-gold-dim); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .metric-content h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.8rem; color: var(--accent-gold); margin-bottom: 4px; }
+        .metric-content p { color: var(--text-secondary); font-size: 0.9rem; }
+        .challenge-tracker { max-width: 800px; margin: 60px auto 0; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; }
+        .tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .tracker-header h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; }
+        .tracker-progress { color: var(--accent-gold); font-weight: 700; font-size: 0.9rem; }
+        .tracker-bar { height: 8px; background: var(--bg-secondary); border-radius: 100px; overflow: hidden; margin-bottom: 24px; }
+        .tracker-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue)); border-radius: 100px; transition: width 2s ease-out; }
+        .tracker-days { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; }
+        .tracker-day { aspect-ratio: 1; border-radius: 8px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); transition: all 0.3s; cursor: pointer; }
+        .tracker-day.completed { background: var(--accent-gold-dim); color: var(--accent-gold); }
+        .tracker-day:hover { transform: scale(1.1); }
 
         .qualifications { background: var(--bg-primary); }
         .qual-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -209,9 +241,6 @@
         .final-cta h2 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(2rem, 5vw, 4rem); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
         .final-cta p { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
 
-        .audio-viz-section { padding: 120px 40px; position: relative; background: var(--bg-secondary); overflow: hidden; }
-        .audio-viz-canvas { width: 100%; height: 200px; margin-top: 40px; }
-
         .footer { background: var(--bg-secondary); border-top: 1px solid var(--border-subtle); padding: 60px 40px 30px; }
         .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; }
         .footer-brand { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.5rem; margin-bottom: 16px; }
@@ -237,55 +266,66 @@
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 48px; max-width: 500px; width: 90%; text-align: center; transform: scale(0.9); transition: transform 0.3s; position: relative; }
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-icon { width: 80px; height: 80px; border-radius: 50%; background: var(--accent-gold-dim); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 24px; }
+        .modal h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.8rem; margin-bottom: 12px; }
+        .modal p { color: var(--text-secondary); margin-bottom: 32px; }
+        .modal-actions { display: flex; flex-direction: column; gap: 12px; }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: none; }
+
         @media (max-width: 1024px) {
             .hero-content { grid-template-columns: 1fr; gap: 60px; }
-            .shield-grid { grid-template-columns: repeat(2, 1fr); }
+            .program-cards { grid-template-columns: 1fr; }
             .qual-grid { grid-template-columns: repeat(2, 1fr); }
             .footer-content { grid-template-columns: 1fr 1fr; }
-            .timeline::before { left: 20px; }
-            .timeline-step { flex-direction: column !important; align-items: flex-start; padding-left: 60px; }
-            .timeline-step-content { width: 100%; }
-            .timeline-step-marker { left: 20px; transform: none; }
-        }
-        @media (max-width: 768px) {
-            .cursor-dot, .cursor-ring { display: none !important; }
+            .cursor-dot, .cursor-ring { display: none; }
             body { cursor: auto; }
-            .nav-cta, .btn-primary, .btn-secondary, .faq-question, .footer-social a, .footer-col a, .course-tab { cursor: pointer; }
+            .nav-cta, .btn-primary, .btn-secondary, .faq-question, .footer-social a, .footer-col a { cursor: pointer; }
         }
         @media (max-width: 768px) {
             .nav-links { display: none; }
             .mobile-menu-btn { display: block; }
             .section { padding: 80px 20px; }
             .hero { padding: 100px 20px 60px; }
-            .shield-grid { grid-template-columns: 1fr; }
             .comparison-grid { grid-template-columns: 1fr; }
+            .metrics-grid { grid-template-columns: 1fr; }
             .qual-grid { grid-template-columns: 1fr; }
             .footer-content { grid-template-columns: 1fr; gap: 40px; }
             .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
             .float-card { display: none; }
-            .shield-mapping { grid-template-columns: 1fr; }
+            .horizontal-card { width: 300px; height: 400px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-logo"><img src="TheTwenty Logo.png" alt="#TheTwenty" style="height:48px;width:auto;display:block;margin:0 auto;"></div>
-        <div class="loading-bar"><div class="loading-fill"></div></div>
+        <div class="loading-bar">
+            <div class="loading-fill"></div>
+        </div>
         <div class="loading-text">Initializing Experience</div>
     </div>
 
+    <!-- Custom Cursor -->
     <div class="cursor-dot" id="cursorDot"></div>
     <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Page Transition Overlay -->
     <div class="page-transition" id="pageTransition"></div>
+
+    <!-- WebGL Particle Canvas -->
     <canvas id="webgl-canvas"></canvas>
 
     <nav class="nav" id="nav">
-        <a href="index_elevated.html" class="nav-logo magnetic-btn"><img src="TheTwenty Logo.png" alt="#TheTwenty" style="height:36px;width:auto;display:block;"></a>
+        <a href="index.html" class="nav-logo magnetic-btn"><img src="TheTwenty Logo.png" alt="#TheTwenty" style="height:36px;width:auto;display:block;"></a>
         <div class="nav-links">
             <a href="kingdom-vision.html" class="magnetic-btn">Vision</a>
             <a href="curriculum.html" class="magnetic-btn">Curriculum</a>
-            <a href="theshield.html" class="magnetic-btn">TheShield</a>
             <a href="careers.html" class="magnetic-btn">Careers</a>
             <a href="faq.html" class="magnetic-btn">FAQ</a>
             <a href="apply-now.html" class="nav-cta magnetic-btn">Apply Now</a>
@@ -298,22 +338,21 @@
         <div class="hero-grid"></div>
         <div class="hero-content">
             <div class="hero-left">
-                <div class="hero-eyebrow">SHIELD Masterclass 2026</div>
+                <div class="hero-eyebrow">Founding Cohort 2026</div>
                 <h1 class="hero-headline" id="heroHeadline">
                     <span id="typewriterText"></span><span class="typewriter-cursor"></span>
                 </h1>
                 <p class="hero-subheadline">
-                    Not a course where you sit and take notes. A 60-day transformation engine 
-                    built on the SHIELD Framework. Skill. Human Proof. Income. Evidence. Leverage. Digital Asset. 
-                    Spirit + Action. Build + Launch.
+                    One opportunity to learn relevant skills. One opportunity to build something real. 
+                    One opportunity to position yourself for better career opportunities. Welcome to #TheTwenty.
                 </p>
                 <div class="hero-cta-group">
                     <a href="apply-now.html" class="btn-primary magnetic-btn" data-magnetic>
                         Apply For #TheTwenty
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
-                    <a href="theshield.html" class="btn-secondary magnetic-btn" data-magnetic>
-                        Explore SHIELD
+                    <a href="kingdom-vision.html" class="btn-secondary magnetic-btn" data-magnetic>
+                        Learn More
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
                     </a>
                 </div>
@@ -324,15 +363,15 @@
                     </div>
                     <div class="trust-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        60-Day Program
+                        3-Day Intensive
                     </div>
                     <div class="trust-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        5 Career Tracks
+                        30-Day Challenge
                     </div>
                     <div class="trust-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        SHIELD Framework
+                        Kingdom Community
                     </div>
                 </div>
             </div>
@@ -356,14 +395,14 @@
                     <div class="float-sub">of 20 spots</div>
                 </div>
                 <div class="float-card float-card-2 parallax-fast">
-                    <div class="float-label">Income Target</div>
+                    <div class="float-label">Target Income</div>
                     <div class="float-value gradient-text">$2,000+</div>
                     <div class="float-sub">monthly potential</div>
                 </div>
                 <div class="float-card float-card-3 parallax-fast">
-                    <div class="float-label">Framework</div>
-                    <div class="float-value gradient-text">S.H.I.E.L.D.</div>
-                    <div class="float-sub">6-pillar system</div>
+                    <div class="float-label">Duration</div>
+                    <div class="float-value gradient-text">30 Days</div>
+                    <div class="float-sub">to career ready</div>
                 </div>
             </div>
         </div>
@@ -371,277 +410,26 @@
 
     <section class="marquee-section">
         <div class="marquee-track">
-            <span class="marquee-item">SKILL</span>
-            <span class="marquee-item active">HUMAN PROOF</span>
-            <span class="marquee-item">INCOME</span>
-            <span class="marquee-item active">EVIDENCE</span>
-            <span class="marquee-item">LEVERAGE</span>
-            <span class="marquee-item active">DIGITAL ASSET</span>
-            <span class="marquee-item">TRANSFORMATION</span>
+            <span class="marquee-item">SKILLS</span>
+            <span class="marquee-item active">TRANSFORMATION</span>
+            <span class="marquee-item">COMMUNITY</span>
+            <span class="marquee-item active">PURPOSE</span>
+            <span class="marquee-item">CAREER</span>
+            <span class="marquee-item active">KINGDOM IMPACT</span>
+            <span class="marquee-item">GROWTH</span>
             <span class="marquee-item active">#THETWENTY</span>
-            <span class="marquee-item">SKILL</span>
-            <span class="marquee-item active">HUMAN PROOF</span>
-            <span class="marquee-item">INCOME</span>
-            <span class="marquee-item active">EVIDENCE</span>
-            <span class="marquee-item">LEVERAGE</span>
-            <span class="marquee-item active">DIGITAL ASSET</span>
-            <span class="marquee-item">TRANSFORMATION</span>
+            <span class="marquee-item">SKILLS</span>
+            <span class="marquee-item active">TRANSFORMATION</span>
+            <span class="marquee-item">COMMUNITY</span>
+            <span class="marquee-item active">PURPOSE</span>
+            <span class="marquee-item">CAREER</span>
+            <span class="marquee-item active">KINGDOM IMPACT</span>
+            <span class="marquee-item">GROWTH</span>
             <span class="marquee-item active">#THETWENTY</span>
         </div>
     </section>
 
-    <section class="section shield-section" id="shield">
-        <div class="section-header reveal">
-            <div class="section-eyebrow">The Framework</div>
-            <h2 class="section-title">Six Letters.<br>One <span class="gradient-text">Transformation Engine.</span></h2>
-            <p class="section-subtitle">SHIELD is not a course. It is a delivery framework that works for any skill you want to master. Vibe coding. Ebook publishing. Content creation. Kingdom business. App development. The structure never changes. Only the skill does.</p>
-        </div>
-        <div class="shield-grid">
-            <div class="shield-card reveal tilt-card">
-                <div class="tilt-card-shine"></div>
-                <div class="shield-letter">S</div>
-                <div class="shield-icon">&#128296;</div>
-                <h3>Skill</h3>
-                <p>Build the core capability. Learn the actual craft through live builds, AI sandboxes, and hands-on projects. Not theory. Execution.</p>
-            </div>
-            <div class="shield-card reveal tilt-card">
-                <div class="tilt-card-shine"></div>
-                <div class="shield-letter">H</div>
-                <div class="shield-icon">&#128100;</div>
-                <h3>Human Proof</h3>
-                <p>Establish credibility. Position yourself as an authority with a personal brand, portfolio, and public presence that proves you can deliver.</p>
-            </div>
-            <div class="shield-card reveal tilt-card">
-                <div class="tilt-card-shine"></div>
-                <div class="shield-letter">I</div>
-                <div class="shield-icon">&#128176;</div>
-                <h3>Income</h3>
-                <p>Monetize immediately. Land your first clients, sales, or revenue within the first 30 days. Income validates skill.</p>
-            </div>
-            <div class="shield-card reveal tilt-card">
-                <div class="tilt-card-shine"></div>
-                <div class="shield-letter">E</div>
-                <div class="shield-icon">&#128200;</div>
-                <h3>Evidence</h3>
-                <p>Create public proof. Document every build, share every win, and build a portfolio that speaks louder than any resume.</p>
-            </div>
-            <div class="shield-card reveal tilt-card">
-                <div class="tilt-card-shine"></div>
-                <div class="shield-letter">L</div>
-                <div class="shield-icon">&#128640;</div>
-                <h3>Leverage</h3>
-                <p>Scale the opportunity. Systematize outreach, applications, and distribution so your results compound over time.</p>
-            </div>
-            <div class="shield-card reveal tilt-card">
-                <div class="tilt-card-shine"></div>
-                <div class="shield-letter">D</div>
-                <div class="shield-icon">&#127760;</div>
-                <h3>Digital Asset</h3>
-                <p>Own the platform. Build email lists, products, and audiences that generate income while you sleep. True ownership.</p>
-            </div>
-        </div>
-        <div style="text-align: center; margin-top: 60px;">
-            <a href="theshield.html" class="btn-secondary magnetic-btn" data-magnetic>
-                Learn How SHIELD Works
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-        </div>
-    </section>
-
-    <section class="section curriculum-section" id="curriculum">
-        <div class="section-header reveal">
-            <div class="section-eyebrow">The Curriculum</div>
-            <h2 class="section-title">Five Tracks.<br>One <span class="gradient-text">Framework.</span></h2>
-            <p class="section-subtitle">Choose your path. Every course runs through the same SHIELD engine. Different skills. Same transformation.</p>
-        </div>
-        <div class="course-tabs reveal">
-            <div class="course-tab active" onclick="switchCourse(0)">Vibe Coding</div>
-            <div class="course-tab" onclick="switchCourse(1)">Ebook Publishing</div>
-            <div class="course-tab" onclick="switchCourse(2)">Content Creation</div>
-            <div class="course-tab" onclick="switchCourse(3)">Kingdom Business</div>
-            <div class="course-tab" onclick="switchCourse(4)">App Development</div>
-        </div>
-
-        <div class="course-content active" id="course-0">
-            <div class="course-hero">
-                <div class="course-meta">
-                    <div class="course-meta-item"><strong>Duration:</strong> 60 Days</div>
-                    <div class="course-meta-item"><strong>Cohort:</strong> 20 Students</div>
-                    <div class="course-meta-item"><strong>Deliverables:</strong> 6 Projects</div>
-                    <div class="course-meta-item"><strong>Income Target:</strong> $2,000+</div>
-                </div>
-                <h3>Vibe Coding with AI</h3>
-                <p>Learn to build websites, web apps, and automation tools using AI sandboxes. No prior coding experience required. You will ship real projects, build a portfolio, and land your first paid clients — all within 60 days.</p>
-            </div>
-            <div class="shield-mapping">
-                <div class="shield-map-item"><h4>S — Skill</h4><p>Build websites with AI sandboxes. HTML, CSS, JavaScript fundamentals through hands-on projects.</p></div>
-                <div class="shield-map-item"><h4>H — Human Proof</h4><p>LinkedIn + personal site as "AI Solutions Architect." Portfolio of 3+ live builds.</p></div>
-                <div class="shield-map-item"><h4>I — Income</h4><p>4 clients at $500 each = $2,000. Proposal templates, pricing tiers, demo scripts included.</p></div>
-                <div class="shield-map-item"><h4>E — Evidence</h4><p>30 days of build documentation on LinkedIn. Case studies, before/afters, process threads.</p></div>
-                <div class="shield-map-item"><h4>L — Leverage</h4><p>5 job applications/day using AI-tailored resumes. Outreach to agencies and startups.</p></div>
-                <div class="shield-map-item"><h4>D — Digital Asset</h4><p>Landing page + email list + digital products (templates, components, courses).</p></div>
-            </div>
-        </div>
-
-        <div class="course-content" id="course-1">
-            <div class="course-hero">
-                <div class="course-meta">
-                    <div class="course-meta-item"><strong>Duration:</strong> 60 Days</div>
-                    <div class="course-meta-item"><strong>Cohort:</strong> 20 Students</div>
-                    <div class="course-meta-item"><strong>Deliverables:</strong> 3 Published Books</div>
-                    <div class="course-meta-item"><strong>Income Target:</strong> $1,500+</div>
-                </div>
-                <h3>Write & Sell Ebooks on Amazon</h3>
-                <p>Master the art of writing, formatting, and publishing ebooks with AI assistance. Build an author brand, optimize for Amazon's algorithm, and create a backlist that generates passive income.</p>
-            </div>
-            <div class="shield-mapping">
-                <div class="shield-map-item"><h4>S — Skill</h4><p>Write, format, and publish ebooks with AI assistance. Cover design, KDP optimization, metadata.</p></div>
-                <div class="shield-map-item"><h4>H — Human Proof</h4><p>Author brand, Amazon author page, Goodreads presence. Professional author identity.</p></div>
-                <div class="shield-map-item"><h4>I — Income</h4><p>First 3 ebooks live + initial sales. Royalties, KDP Select, and promotional strategies.</p></div>
-                <div class="shield-map-item"><h4>E — Evidence</h4><p>30 days of writing process content. Behind-the-scenes, word count updates, launch stories.</p></div>
-                <div class="shield-map-item"><h4>L — Leverage</h4><p>5 targeted niche research + keyword optimization actions daily. AMS ads, email launches.</p></div>
-                <div class="shield-map-item"><h4>D — Digital Asset</h4><p>Author website + email list + backlist funnel. Series bible for long-term publishing.</p></div>
-            </div>
-        </div>
-
-        <div class="course-content" id="course-2">
-            <div class="course-hero">
-                <div class="course-meta">
-                    <div class="course-meta-item"><strong>Duration:</strong> 60 Days</div>
-                    <div class="course-meta-item"><strong>Cohort:</strong> 20 Students</div>
-                    <div class="course-meta-item"><strong>Deliverables:</strong> 30+ Pieces of Content</div>
-                    <div class="course-meta-item"><strong>Income Target:</strong> $2,000+</div>
-                </div>
-                <h3>AI-Powered Content Creation</h3>
-                <p>Generate video scripts, thumbnails, shorts, and long-form content with AI. Build a YouTube or TikTok channel, monetize through brand deals, and create a content system that runs on autopilot.</p>
-            </div>
-            <div class="shield-mapping">
-                <div class="shield-map-item"><h4>S — Skill</h4><p>Generate video scripts, thumbnails, shorts with AI. Editing, publishing, and optimization workflows.</p></div>
-                <div class="shield-map-item"><h4>H — Human Proof</h4><p>YouTube/TikTok channel as "AI Content Strategist." Consistent posting schedule and brand voice.</p></div>
-                <div class="shield-map-item"><h4>I — Income</h4><p>First brand deal or monetized channel. Sponsorship outreach, affiliate marketing, product sales.</p></div>
-                <div class="shield-map-item"><h4>E — Evidence</h4><p>30 days of published content showing process. Analytics wins, viral moments, growth stories.</p></div>
-                <div class="shield-map-item"><h4>L — Leverage</h4><p>5 outreach messages to brands/collabs daily. Network expansion, cross-promotion, media kit.</p></div>
-                <div class="shield-map-item"><h4>D — Digital Asset</h4><p>Channel + newsletter + digital template shop. Evergreen content library and membership.</p></div>
-            </div>
-        </div>
-
-        <div class="course-content" id="course-3">
-            <div class="course-hero">
-                <div class="course-meta">
-                    <div class="course-meta-item"><strong>Duration:</strong> 60 Days</div>
-                    <div class="course-meta-item"><strong>Cohort:</strong> 20 Students</div>
-                    <div class="course-meta-item"><strong>Deliverables:</strong> Business Plan + Launch</div>
-                    <div class="course-meta-item"><strong>Income Target:</strong> $1,000+</div>
-                </div>
-                <h3>Kingdom Business Fundamentals</h3>
-                <p>Design business models rooted in purpose and faith. Learn financial literacy, operations, and mission-driven marketing. Launch a venture that generates income while advancing God's work.</p>
-            </div>
-            <div class="shield-mapping">
-                <div class="shield-map-item"><h4>S — Skill</h4><p>Business model design, financial literacy, operations. Mission-driven strategy and planning.</p></div>
-                <div class="shield-map-item"><h4>H — Human Proof</h4><p>Founder identity, mission statement, community presence. Testimonials and impact stories.</p></div>
-                <div class="shield-map-item"><h4>I — Income</h4><p>First paying customer or donation-based revenue. Pricing, sales, and stewardship models.</p></div>
-                <div class="shield-map-item"><h4>E — Evidence</h4><p>30 days of mission-driven content and impact stories. Transparency reports, transformation stories.</p></div>
-                <div class="shield-map-item"><h4>L — Leverage</h4><p>5 investor/partner/donor conversations daily. Grant applications, partnership proposals.</p></div>
-                <div class="shield-map-item"><h4>D — Digital Asset</h4><p>Organization website + donor list + recurring giving funnel. Community platform and resources.</p></div>
-            </div>
-        </div>
-
-        <div class="course-content" id="course-4">
-            <div class="course-hero">
-                <div class="course-meta">
-                    <div class="course-meta-item"><strong>Duration:</strong> 60 Days</div>
-                    <div class="course-meta-item"><strong>Cohort:</strong> 20 Students</div>
-                    <div class="course-meta-item"><strong>Deliverables:</strong> 1 Shipped App</div>
-                    <div class="course-meta-item"><strong>Income Target:</strong> $3,000+</div>
-                </div>
-                <h3>AI-Powered App Development</h3>
-                <p>Vibe-code mobile and web apps using AI sandboxes. Build with Flutter, React Native, or Swift via AI. Ship a real app, launch on the App Store, and land your first development clients.</p>
-            </div>
-            <div class="shield-mapping">
-                <div class="shield-map-item"><h4>S — Skill</h4><p>Vibe-code mobile & web apps using AI. Flutter, React Native, Swift via AI sandboxes.</p></div>
-                <div class="shield-map-item"><h4>H — Human Proof</h4><p>"App Developer" portfolio + GitHub + Product Hunt. Case studies and app store presence.</p></div>
-                <div class="shield-map-item"><h4>I — Income</h4><p>2-3 MVPs for local businesses at $1,500-$3,000 each. Or launch a paid app.</p></div>
-                <div class="shield-map-item"><h4>E — Evidence</h4><p>30 days of build logs, feature breakdowns, launch posts. Open-source contributions.</p></div>
-                <div class="shield-map-item"><h4>L — Leverage</h4><p>5 app ideas pitched to accelerators, investors, or App Store feature requests daily.</p></div>
-                <div class="shield-map-item"><h4>D — Digital Asset</h4><p>Personal dev studio site + waitlist + newsletter + template/component marketplace.</p></div>
-            </div>
-        </div>
-
-        <div style="text-align: center; margin-top: 60px;">
-            <a href="curriculum.html" class="btn-secondary magnetic-btn" data-magnetic>
-                View Full Curriculum
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-        </div>
-    </section>
-
-    <section class="section timeline-section" id="timeline">
-        <div class="section-header reveal">
-            <div class="section-eyebrow">The Journey</div>
-            <h2 class="section-title">60 Days.<br><span class="gradient-text">From Zero to Launched.</span></h2>
-        </div>
-        <div class="timeline">
-            <div class="timeline-step reveal">
-                <div class="timeline-step-marker">1</div>
-                <div class="timeline-step-content">
-                    <div class="timeline-duration">Days 1-3</div>
-                    <h4>The Live Build Intensive</h4>
-                    <p>Three days of immersive, hands-on training. Choose your track and build your first real project alongside instructors and peers. No theory — only execution.</p>
-                </div>
-            </div>
-            <div class="timeline-step reveal">
-                <div class="timeline-step-marker">2</div>
-                <div class="timeline-step-content">
-                    <div class="timeline-duration">Days 4-8</div>
-                    <h4>Human Proof Setup</h4>
-                    <p>Build your personal brand, portfolio, and public presence. LinkedIn optimization, portfolio site, and authority positioning in your chosen field.</p>
-                </div>
-            </div>
-            <div class="timeline-step reveal">
-                <div class="timeline-step-marker">3</div>
-                <div class="timeline-step-content">
-                    <div class="timeline-duration">Days 9-14</div>
-                    <h4>First Income Sprint</h4>
-                    <p>Land your first client, sale, or revenue. Client acquisition kit, proposal templates, pricing strategy, and sales psychology. Income validates skill.</p>
-                </div>
-            </div>
-            <div class="timeline-step reveal">
-                <div class="timeline-step-marker">4</div>
-                <div class="timeline-step-content">
-                    <div class="timeline-duration">Days 15-44</div>
-                    <h4>Evidence & Leverage</h4>
-                    <p>30 days of public documentation. Daily content, portfolio expansion, and systematic outreach. 5 actions per day. Compound visibility into opportunity.</p>
-                </div>
-            </div>
-            <div class="timeline-step reveal">
-                <div class="timeline-step-marker">5</div>
-                <div class="timeline-step-content">
-                    <div class="timeline-duration">Days 15-44</div>
-                    <h4>Digital Asset Building</h4>
-                    <p>Build your platform. Email list, digital products, automation systems. Assets that work while you sleep. Ownership over rented attention.</p>
-                </div>
-            </div>
-            <div class="timeline-step reveal">
-                <div class="timeline-step-marker">6</div>
-                <div class="timeline-step-content">
-                    <div class="timeline-duration">Days 1-60</div>
-                    <h4>Spiritual Anchor</h4>
-                    <p>Daily prayer, clarity, and focus routine. Because transformation without spiritual grounding is just productivity. We build people, not just portfolios.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="audio-viz-section" id="audioViz">
-        <div class="section-header reveal">
-            <div class="section-eyebrow">The Rhythm</div>
-            <h2 class="section-title">Every Day Counts.<br><span class="gradient-text">Every Action Matters.</span></h2>
-            <p class="section-subtitle">Watch your progress come alive as you build momentum through the 60-day transformation.</p>
-        </div>
-        <canvas class="audio-viz-canvas" id="audioVizCanvas"></canvas>
-    </section>
-
-    <section class="section comparison-section" id="comparison">
+    <section class="section transformation" id="vision">
         <div class="section-header reveal">
             <div class="section-eyebrow">The Difference</div>
             <h2 class="section-title">Most Programs Sell Skills.<br>We Build <span class="gradient-text">Transformation.</span></h2>
@@ -649,26 +437,212 @@
         <div class="comparison-grid">
             <div class="comparison-card negative reveal tilt-card">
                 <div class="tilt-card-shine"></div>
-                <h3>What We Do Not Promise</h3>
+                <h3>What We Do not Promise</h3>
                 <ul class="comparison-list">
-                    <li><span class="icon x">X</span> Passive Video Lectures</li>
-                    <li><span class="icon x">X</span> Certificates Without Proof</li>
+                    <li><span class="icon x">X</span> AI Training Only</li>
+                    <li><span class="icon x">X</span> Resume Writing Only</li>
+                    <li><span class="icon x">X</span> LinkedIn Optimization Only</li>
                     <li><span class="icon x">X</span> Generic Career Advice</li>
                     <li><span class="icon x">X</span> Information Without Action</li>
-                    <li><span class="icon x">X</span> One-Size-Fits-All Curriculum</li>
                 </ul>
             </div>
             <div class="comparison-card positive reveal tilt-card">
                 <div class="tilt-card-shine"></div>
-                <h3>What You Actually Get</h3>
+                <h3>Who You Become</h3>
                 <ul class="comparison-list">
-                    <li><span class="icon check">&#10003;</span> Live Builds With Instructors</li>
-                    <li><span class="icon check">&#10003;</span> Real Portfolio + Income</li>
-                    <li><span class="icon check">&#10003;</span> SHIELD Framework Mastery</li>
-                    <li><span class="icon check">&#10003;</span> Daily Accountability</li>
-                    <li><span class="icon check">&#10003;</span> Track-Specific Mastery</li>
+                    <li><span class="icon check">&#10003;</span> Employable Professional</li>
+                    <li><span class="icon check">&#10003;</span> Problem Solver</li>
+                    <li><span class="icon check">&#10003;</span> Builder &amp; Creator</li>
+                    <li><span class="icon check">&#10003;</span> Kingdom Leader</li>
+                    <li><span class="icon check">&#10003;</span> Community Member</li>
                 </ul>
             </div>
+        </div>
+    </section>
+
+    <section class="section big-why">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">The Vision</div>
+            <h2 class="section-title">We Are Not Just Building<br>A Cathedral. We Are Building<br><span class="gradient-text">The People</span> Who Will Build It.</h2>
+        </div>
+        <div class="journey-diagram reveal interactive-diagram" id="journeyDiagram">
+            <svg style="position:absolute; top:0; left:28px; width:2px; height:100%; z-index:1;" id="journeySvg">
+                <line class="diagram-connection" x1="0" y1="0" x2="0" y2="100%" id="journeyLine"/>
+            </svg>
+            <div class="journey-step diagram-node" data-step="1">
+                <div class="journey-icon">&#128100;</div>
+                <div class="journey-content">
+                    <h4>People</h4>
+                    <p>Identifying 20 talented young people with potential but no direction</p>
+                </div>
+            </div>
+            <div class="journey-step diagram-node" data-step="2">
+                <div class="journey-icon">&#128295;</div>
+                <div class="journey-content">
+                    <h4>Skills</h4>
+                    <p>Equipping with AI, technology, and career development expertise</p>
+                </div>
+            </div>
+            <div class="journey-step diagram-node" data-step="3">
+                <div class="journey-icon">&#128188;</div>
+                <div class="journey-content">
+                    <h4>Careers</h4>
+                    <p>Positioning for global opportunities and sustainable income</p>
+                </div>
+            </div>
+            <div class="journey-step diagram-node" data-step="4">
+                <div class="journey-icon">&#127758;</div>
+                <div class="journey-content">
+                    <h4>Impact</h4>
+                    <p>Creating Kingdom-minded professionals who advance God is work</p>
+                </div>
+            </div>
+            <div class="journey-step diagram-node" data-step="5">
+                <div class="journey-icon">&#9962;</div>
+                <div class="journey-content">
+                    <h4>Cathedral</h4>
+                    <p>Building the physical structure through the people we have raised</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Audio Visualizer Section -->
+    <section class="audio-viz-section" id="audioViz">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">The Rhythm</div>
+            <h2 class="section-title">Every Day Counts.<br><span class="gradient-text">Every Action Matters.</span></h2>
+            <p class="section-subtitle">Watch your progress come alive as you build momentum through the 30-day challenge.</p>
+        </div>
+        <canvas class="audio-viz-canvas" id="audioVizCanvas"></canvas>
+    </section>
+
+    <section class="section program" id="program">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">The Experience</div>
+            <h2 class="section-title">Three Days. One<br><span class="gradient-text">Transformation.</span></h2>
+            <p class="section-subtitle">A structured, intensive program designed to take you from potential to professional in 72 hours.</p>
+        </div>
+        <div class="program-cards">
+            <div class="program-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="program-day">Day One</div>
+                <div class="program-icon">&#129504;</div>
+                <h3>Future-Proof Your Thinking</h3>
+                <p>Understand where opportunities are emerging in an AI-powered world and how to position yourself.</p>
+                <ul class="program-details">
+                    <li>Understanding AI &amp; LLMs</li>
+                    <li>Prompt Engineering</li>
+                    <li>AI Agents &amp; Automation</li>
+                    <li>Future of Work</li>
+                </ul>
+            </div>
+            <div class="program-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="program-day">Day Two</div>
+                <div class="program-icon">&#128187;</div>
+                <h3>Build Real Projects</h3>
+                <p>Choose your track and build tangible deliverables that make you immediately employable.</p>
+                <ul class="program-details">
+                    <li>ATS Resume &amp; Cover Letter</li>
+                    <li>Portfolio Website</li>
+                    <li>LinkedIn Profile Optimization</li>
+                    <li>Content System Setup</li>
+                </ul>
+            </div>
+            <div class="program-card reveal tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="program-day">Day Three</div>
+                <div class="program-icon">&#128640;</div>
+                <h3>Launch Your Career</h3>
+                <p>Master the systems and strategies to secure opportunities and build lasting professional presence.</p>
+                <ul class="program-details">
+                    <li>Job Search Systems</li>
+                    <li>LinkedIn Authority</li>
+                    <li>Networking Strategies</li>
+                    <li>Interview Preparation</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Horizontal Scroll Section -->
+    <section class="horizontal-scroll-section" id="horizontalSection">
+        <div class="horizontal-scroll-container">
+            <div class="horizontal-scroll-track" id="horizontalTrack">
+                <div class="horizontal-card">
+                    <div class="program-icon" style="margin-bottom:20px;">&#128200;</div>
+                    <h3 style="font-family:Montserrat;font-weight:700;font-size:1.5rem;margin-bottom:16px;">Day 1-10: Foundation</h3>
+                    <p style="color:var(--text-secondary);line-height:1.6;">Build your portfolio, optimize your profiles, and establish your professional presence across all platforms.</p>
+                </div>
+                <div class="horizontal-card">
+                    <div class="program-icon" style="margin-bottom:20px;">&#128640;</div>
+                    <h3 style="font-family:Montserrat;font-weight:700;font-size:1.5rem;margin-bottom:16px;">Day 11-20: Acceleration</h3>
+                    <p style="color:var(--text-secondary);line-height:1.6;">Ramp up applications, expand your network, and start creating content that positions you as an authority.</p>
+                </div>
+                <div class="horizontal-card">
+                    <div class="program-icon" style="margin-bottom:20px;">&#127942;</div>
+                    <h3 style="font-family:Montserrat;font-weight:700;font-size:1.5rem;margin-bottom:16px;">Day 21-30: Mastery</h3>
+                    <p style="color:var(--text-secondary);line-height:1.6;">Interview preparation, offer negotiation, and transitioning from job seeker to employed professional.</p>
+                </div>
+                <div class="horizontal-card">
+                    <div class="program-icon" style="margin-bottom:20px;">&#127775;</div>
+                    <h3 style="font-family:Montserrat;font-weight:700;font-size:1.5rem;margin-bottom:16px;">Beyond Day 30</h3>
+                    <p style="color:var(--text-secondary);line-height:1.6;">Join the alumni network, mentor the next cohort, and continue building your Kingdom impact career.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section challenge" id="challenge">
+        <div class="section-header reveal">
+            <div class="section-eyebrow">Execution</div>
+            <h2 class="section-title">Training Is Good.<br><span class="gradient-text">Execution</span> Changes Lives.</h2>
+            <p class="section-subtitle">The 30-Day Challenge turns knowledge into results through daily accountability and action.</p>
+        </div>
+        <div class="metrics-grid reveal">
+            <div class="metric-card tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="metric-icon">&#128231;</div>
+                <div class="metric-content">
+                    <h4>60</h4>
+                    <p>Job Applications Target</p>
+                </div>
+            </div>
+            <div class="metric-card tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="metric-icon">&#128241;</div>
+                <div class="metric-content">
+                    <h4>30</h4>
+                    <p>LinkedIn Posts</p>
+                </div>
+            </div>
+            <div class="metric-card tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="metric-icon">&#129309;</div>
+                <div class="metric-content">
+                    <h4>300</h4>
+                    <p>New Connections</p>
+                </div>
+            </div>
+            <div class="metric-card tilt-card">
+                <div class="tilt-card-shine"></div>
+                <div class="metric-icon">&#128193;</div>
+                <div class="metric-content">
+                    <h4>100%</h4>
+                    <p>Portfolio Complete</p>
+                </div>
+            </div>
+        </div>
+        <div class="challenge-tracker reveal">
+            <div class="tracker-header">
+                <h4>30-Day Progress Tracker</h4>
+                <span class="tracker-progress">Interactive Demo</span>
+            </div>
+            <div class="tracker-bar">
+                <div class="tracker-fill" id="trackerFill"></div>
+            </div>
+            <div class="tracker-days" id="trackerDays"></div>
         </div>
     </section>
 
@@ -682,13 +656,13 @@
                 <div class="tilt-card-shine"></div>
                 <div class="qual-number">01</div>
                 <h4>Gen Z (18-35)</h4>
-                <p>Students, graduates, NYSC members, or early career professionals ready for real growth.</p>
+                <p>Students, graduates, NYSC members, or early career professionals ready for growth.</p>
             </div>
             <div class="qual-card reveal tilt-card">
                 <div class="tilt-card-shine"></div>
                 <div class="qual-number">02</div>
                 <h4>Feeling Stuck</h4>
-                <p>You feel behind and want direction, not just another online course to bookmark.</p>
+                <p>You feel behind and want direction, not just another online course.</p>
             </div>
             <div class="qual-card reveal tilt-card">
                 <div class="tilt-card-shine"></div>
@@ -747,7 +721,7 @@
                     <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
                 </div>
                 <div class="faq-answer">
-                    <p>The program is fully sponsored by the church's building and talent development initiative. There is no cost to participants. The vision is to invest in people first, because the building is only as strong as the people who build it.</p>
+                    <p>The program is fully sponsored by the church is building and talent development initiative. There is no cost to participants. The vision is to invest in people first, because the building is only as strong as the people who build it.</p>
                 </div>
             </div>
             <div class="faq-item reveal">
@@ -792,7 +766,7 @@
                     <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
                 </div>
                 <div class="faq-answer">
-                    <p>Because we focus on transformation, not just information. We are not just teaching skills, we are building people who will build the Kingdom. The SHIELD Framework, community accountability, and mission-driven approach set this apart from generic bootcamps.</p>
+                    <p>Because we focus on transformation, not just information. We are not just teaching skills, we are building people who will build the Kingdom. The community, accountability, and mission-driven approach set this apart from generic bootcamps.</p>
                 </div>
             </div>
         </div>
@@ -812,8 +786,8 @@
     <footer class="footer">
         <div class="footer-content">
             <div>
-                <div class="footer-brand"><img src="TheTwenty Logo.png" alt="#TheTwenty" style="height:28px;width:auto;display:block;"></div>
-                <p class="footer-desc">Building people before buildings. A movement of 20 young professionals being equipped for the future while advancing God's work through the SHIELD Framework.</p>
+                <div class="footer-brand">#The<span>Twenty</span></div>
+                <p class="footer-desc">Building people before buildings. A movement of 20 young professionals being equipped for the future while advancing God is work.</p>
                 <div class="footer-social">
                     <a href="#" title="WhatsApp">&#128172;</a>
                     <a href="#" title="LinkedIn">&#128279;</a>
@@ -824,7 +798,6 @@
                 <h4>Program</h4>
                 <a href="kingdom-vision.html">Vision</a>
                 <a href="curriculum.html">Curriculum</a>
-                <a href="theshield.html">TheShield</a>
                 <a href="careers.html">Careers</a>
                 <a href="faq.html">FAQ</a>
             </div>
@@ -864,8 +837,6 @@
         let ringX = 0, ringY = 0;
 
         if (window.innerWidth > 768 && cursorDot && cursorRing) {
-            cursorDot.style.left = '50%'; cursorDot.style.top = '50%';
-            cursorRing.style.left = '50%'; cursorRing.style.top = '50%';
             document.addEventListener('mousemove', function(e) {
                 mouseX = e.clientX;
                 mouseY = e.clientY;
@@ -884,14 +855,15 @@
             }
             animateCursor();
 
-            const hoverElements = document.querySelectorAll('a, button, .tilt-card, .faq-question, input, select, textarea, .course-tab');
+            // Hover effects for interactive elements
+            const hoverElements = document.querySelectorAll('a, button, .tilt-card, .faq-question, input, select, textarea');
             hoverElements.forEach(el => {
                 el.addEventListener('mouseenter', () => cursorRing.classList.add('hovering'));
                 el.addEventListener('mouseleave', () => cursorRing.classList.remove('hovering'));
             });
         }
 
-        // ===== 3. WEBGL PARTICLE BACKGROUND =====
+        // ===== 3. WEBGL PARTICLE BACKGROUND (Pure Canvas, No External Libs) =====
         const canvas = document.getElementById('webgl-canvas');
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -907,7 +879,9 @@
             window.addEventListener('resize', resizeCanvas);
 
             class Particle {
-                constructor() { this.reset(); }
+                constructor() {
+                    this.reset();
+                }
                 reset() {
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
@@ -915,7 +889,7 @@
                     this.speedX = (Math.random() - 0.5) * 0.3;
                     this.speedY = (Math.random() - 0.5) * 0.3;
                     this.opacity = Math.random() * 0.5 + 0.1;
-                    this.hue = Math.random() > 0.5 ? 45 : 220;
+                    this.hue = Math.random() > 0.5 ? 45 : 220; // Gold or Blue
                 }
                 update() {
                     this.x += this.speedX;
@@ -931,7 +905,9 @@
                 }
             }
 
-            for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
 
             function drawConnections() {
                 for (let i = 0; i < particles.length; i++) {
@@ -998,8 +974,11 @@
                 const rotateX = (y - centerY) / 10;
                 const rotateY = (centerX - x) / 10;
                 card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
                 const shine = card.querySelector('.tilt-card-shine');
-                if (shine) shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.2) 0%, transparent 60%)`;
+                if (shine) {
+                    shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.2) 0%, transparent 60%)`;
+                }
             });
             card.addEventListener('mouseleave', function() {
                 card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
@@ -1037,8 +1016,12 @@
 
         window.addEventListener('scroll', function() {
             const scrollY = window.scrollY;
-            parallaxFast.forEach(el => { el.style.transform = `translateY(${scrollY * 0.15}px)`; });
-            parallaxSlow.forEach(el => { el.style.transform = `translateY(${scrollY * 0.05}px)`; });
+            parallaxFast.forEach(el => {
+                el.style.transform = `translateY(${scrollY * 0.15}px)`;
+            });
+            parallaxSlow.forEach(el => {
+                el.style.transform = `translateY(${scrollY * 0.05}px)`;
+            });
         });
 
         // ===== 8. MAGNETIC BUTTONS =====
@@ -1063,7 +1046,9 @@
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     if (pageTransition) pageTransition.classList.add('active');
-                    setTimeout(() => { window.location.href = href; }, 600);
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 600);
                 });
             }
         });
@@ -1095,17 +1080,20 @@
                 bars.forEach((bar, i) => {
                     bar.target = Math.abs(Math.sin(vizTime + i * 0.2)) * vizCanvas.height * 0.8;
                     bar.height += (bar.target - bar.height) * bar.speed;
+
                     const x = i * barWidth;
                     const y = vizCanvas.height - bar.height;
                     const gradient = vCtx.createLinearGradient(0, vizCanvas.height, 0, y);
                     gradient.addColorStop(0, 'rgba(212, 166, 58, 0.8)');
                     gradient.addColorStop(1, 'rgba(37, 99, 235, 0.4)');
+
                     vCtx.fillStyle = gradient;
                     vCtx.fillRect(x + 2, y, barWidth - 4, bar.height);
                 });
                 requestAnimationFrame(animateViz);
             }
 
+            // Only animate when visible
             const vizObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -1117,7 +1105,25 @@
             vizObserver.observe(document.getElementById('audioViz'));
         }
 
-        // ===== 11. PARTICLE BURST ON CLICK =====
+        // ===== 11. HORIZONTAL SCROLL SECTION =====
+        const horizontalSection = document.getElementById('horizontalSection');
+        const horizontalTrack = document.getElementById('horizontalTrack');
+        if (horizontalSection && horizontalTrack) {
+            window.addEventListener('scroll', function() {
+                const rect = horizontalSection.getBoundingClientRect();
+                const sectionTop = rect.top;
+                const sectionHeight = horizontalSection.offsetHeight;
+                const viewportHeight = window.innerHeight;
+
+                if (sectionTop < 0 && sectionTop > -sectionHeight + viewportHeight) {
+                    const progress = Math.abs(sectionTop) / (sectionHeight - viewportHeight);
+                    const maxScroll = horizontalTrack.scrollWidth - window.innerWidth;
+                    horizontalTrack.style.transform = `translateX(-${progress * maxScroll}px)`;
+                }
+            });
+        }
+
+        // ===== 12. PARTICLE BURST ON CLICK =====
         document.addEventListener('click', function(e) {
             if (window.innerWidth <= 768) return;
             const burstCount = 12;
@@ -1125,13 +1131,27 @@
 
             for (let i = 0; i < burstCount; i++) {
                 const particle = document.createElement('div');
-                particle.style.cssText = `position:fixed;width:6px;height:6px;border-radius:50%;background:${colors[Math.floor(Math.random()*colors.length)]};pointer-events:none;z-index:99997;left:${e.clientX}px;top:${e.clientY}px;`;
+                particle.style.cssText = `
+                    position: fixed;
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    pointer-events: none;
+                    z-index: 99997;
+                    left: ${e.clientX}px;
+                    top: ${e.clientY}px;
+                `;
                 document.body.appendChild(particle);
+
                 const angle = (Math.PI * 2 * i) / burstCount;
                 const velocity = 50 + Math.random() * 100;
                 const vx = Math.cos(angle) * velocity;
                 const vy = Math.sin(angle) * velocity;
-                let px = e.clientX, py = e.clientY, opacity = 1;
+
+                let px = e.clientX;
+                let py = e.clientY;
+                let opacity = 1;
 
                 function animateBurst() {
                     px += vx * 0.02;
@@ -1140,36 +1160,82 @@
                     particle.style.left = px + 'px';
                     particle.style.top = py + 'px';
                     particle.style.opacity = opacity;
-                    if (opacity > 0) requestAnimationFrame(animateBurst);
-                    else particle.remove();
+
+                    if (opacity > 0) {
+                        requestAnimationFrame(animateBurst);
+                    } else {
+                        particle.remove();
+                    }
                 }
                 animateBurst();
             }
         });
 
-        // ===== 12. NAV SCROLL EFFECT =====
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('nav');
-            if (window.scrollY > 50) nav.classList.add('scrolled');
-            else nav.classList.remove('scrolled');
+        // ===== 13. INTERACTIVE DIAGRAM =====
+        const journeyNodes = document.querySelectorAll('.diagram-node');
+        journeyNodes.forEach((node, index) => {
+            node.addEventListener('click', function() {
+                journeyNodes.forEach(n => n.style.opacity = '0.4');
+                node.style.opacity = '1';
+                node.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    journeyNodes.forEach(n => {
+                        n.style.opacity = '1';
+                        n.style.transform = 'scale(1)';
+                    });
+                }, 1500);
+            });
         });
 
-        // ===== 13. REVEAL ON SCROLL =====
+        // ===== 14. NAV SCROLL EFFECT =====
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav');
+            if (window.scrollY > 50) { nav.classList.add('scrolled'); } else { nav.classList.remove('scrolled'); }
+        });
+
+        // ===== 15. REVEAL ON SCROLL =====
         const revealElements = document.querySelectorAll('.reveal');
         const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); } });
         }, { threshold: 0.1 });
         revealElements.forEach(el => revealObserver.observe(el));
 
-        // ===== 14. COURSE TAB SWITCHER =====
-        window.switchCourse = function(index) {
-            document.querySelectorAll('.course-tab').forEach((tab, i) => {
-                tab.classList.toggle('active', i === index);
-            });
-            document.querySelectorAll('.course-content').forEach((content, i) => {
-                content.classList.toggle('active', i === index);
-            });
-        };
+        // ===== 16. TRACKER INIT =====
+        const container = document.getElementById('trackerDays');
+        const fill = document.getElementById('trackerFill');
+        if (container && fill) {
+            for (let i = 1; i <= 30; i++) {
+                const day = document.createElement('div');
+                day.className = 'tracker-day' + (i <= 15 ? ' completed' : '');
+                day.textContent = i;
+                day.title = 'Day ' + i;
+                container.appendChild(day);
+            }
+            setTimeout(() => { fill.style.width = '50%'; }, 500);
+        }
+
+        // ===== 17. COUNTER ANIMATION =====
+        const counterSection = document.querySelector('.counter-section');
+        if (counterSection) {
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = document.getElementById('bigCounter');
+                        if (counter) {
+                            let current = 20;
+                            const target = 7;
+                            const interval = setInterval(() => {
+                                current--;
+                                counter.innerHTML = String(current).padStart(2, '0') + '<span style="font-size:0.5em; color: var(--text-muted);">/20</span>';
+                                if (current <= target) { clearInterval(interval); }
+                            }, 150);
+                        }
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            counterObserver.observe(counterSection);
+        }
     })();
 
     // ===== GLOBAL FUNCTIONS =====
@@ -1177,7 +1243,7 @@
         const item = element.parentElement;
         const isActive = item.classList.contains('active');
         document.querySelectorAll('.faq-item').forEach(faq => faq.classList.remove('active'));
-        if (!isActive) item.classList.add('active');
+        if (!isActive) { item.classList.add('active'); }
     }
 
     function toggleMobileMenu() {
