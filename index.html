@@ -975,27 +975,21 @@
         const typewriterText = document.getElementById('typewriterText');
         const fullText = "You are Not Behind. You are Just One Opportunity Away.";
         let charIndex = 0;
-        let isDeleting = false;
 
         function typeWriter() {
             if (!typewriterText) return;
             const currentText = fullText.substring(0, charIndex);
             typewriterText.textContent = currentText;
 
-            if (!isDeleting && charIndex < fullText.length) {
+            if (charIndex < fullText.length) {
                 charIndex++;
                 setTimeout(typeWriter, 50 + Math.random() * 50);
-            } else if (isDeleting && charIndex > 0) {
-                charIndex--;
-                setTimeout(typeWriter, 30);
-            } else if (charIndex === fullText.length) {
-                setTimeout(() => { isDeleting = true; typeWriter(); }, 3000);
-            } else if (charIndex === 0) {
-                isDeleting = false;
-                setTimeout(typeWriter, 500);
+            } else {
+                const cursor = document.querySelector('.typewriter-cursor');
+                if (cursor) cursor.style.display = 'none';
             }
         }
-        setTimeout(typeWriter, 2500);
+        setTimeout(typeWriter, 900);
 
         // ===== 5. 3D TILT CARDS =====
         const tiltCards = document.querySelectorAll('.tilt-card');
